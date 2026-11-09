@@ -36,6 +36,8 @@ def main(argv=None) -> int:
     from transformers import AutoModelForCausalLM, AutoTokenizer, set_seed
     from trl import GRPOConfig, GRPOTrainer
 
+    from conviction.evaluation.runner import require_cuda
+    require_cuda()
     set_seed(cfg["seed"])
     out = Path(cfg["output_dir"])
     out.mkdir(parents=True, exist_ok=True)

@@ -37,6 +37,14 @@ def render_prompt(tokenizer, episode_messages: list[dict], condition: str, enabl
                                          add_generation_prompt=True, enable_thinking=enable_thinking)
 
 
+def require_cuda() -> None:
+    """Abort if CONVICTION_REQUIRE_CUDA=1 and no CUDA device is visible (prevents silent CPU fallback on pods)."""
+    import os
+    import torch
+    if os.environ.get("CONVICTION_REQUIRE_CUDA") == "1" and not torch.cuda.is_available():
+        raise SystemExit(f"CUDA required but unavailable (torch {torch.__version__}, built for CUDA {torch.version.cuda})")
+
+
 def load_model(model_name: str, adapter: str | None = None, revision: str | None = None,
                dtype: str = "bfloat16", device: str | None = None):
     import torch
@@ -46,6 +54,7 @@ def load_model(model_name: str, adapter: str | None = None, revision: str | None
     tok.padding_side = "left"
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
+    require_cuda()
     if device is None:
         device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
     model = AutoModelForCausalLM.from_pretrained(model_name, revision=revision,

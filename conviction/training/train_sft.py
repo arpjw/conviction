@@ -50,6 +50,8 @@ def main(argv=None) -> int:
     from transformers import AutoModelForCausalLM, AutoTokenizer, set_seed
     from trl import SFTConfig, SFTTrainer
 
+    from conviction.evaluation.runner import require_cuda
+    require_cuda()
     set_seed(cfg["seed"])
     out = Path(cfg["output_dir"])
     out.mkdir(parents=True, exist_ok=True)
@@ -90,7 +92,7 @@ def main(argv=None) -> int:
     ex = trainer.train_dataset[0]
     target = tok.decode([i for i, l in zip(ex["input_ids"], ex["labels"]) if l != -100])
     print("loss-masked target for example 0:", repr(target))
-    if not target.startswith('{"decision"') or target.count(tok.eos_token) != 1:
+    if not target.startswith('{"reason"') or target.count(tok.eos_token) != 1:
         raise RuntimeError(f"unexpected SFT loss target: {target!r}")
     t0 = time.time()
     resume = cfg.get("resume_from_checkpoint")

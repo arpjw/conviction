@@ -13,7 +13,7 @@ dependencies = [
 [project.optional-dependencies]
 # Installed on the GPU pod (and optionally locally for CPU smoke tests).
 train = [
-    "torch>=2.4",
+    "torch==2.14.1",  # newest build available for CUDA 13.0 drivers (see [tool.uv.sources])
     "transformers>=4.51",
     "trl>=0.19",
     "peft>=0.15",
@@ -41,3 +41,13 @@ packages = ["conviction"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+
+# On Linux GPU pods, install the CUDA 13.0 build (runs on driver >= 13.0, i.e. 580+).
+# The default PyPI wheel (cu132) silently falls back to CPU on 13.0 hosts.
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu130", marker = "sys_platform == 'linux'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true

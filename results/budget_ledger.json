@@ -13,5 +13,12 @@
    "kind": "measured_session"
   }
  ],
- "open": null
+ "open": {
+  "phase": "setup_baseline",
+  "gpu": "RTX 4090 (community) ersnx5wysm6ah3",
+  "rate": 0.34,
+  "storage_rate": 0.0,
+  "start": 1794259127.8567832,
+  "note": "val v2 + E0/E1 baselines"
+ }
 }
