@@ -19,7 +19,7 @@ grpo:
   batch_size: 16         # completions per device micro-batch (= 4 prompts x 4 generations)
   grad_accum: 4          # 16 prompts / 64 completions per optimizer step
   num_generations: 4
-  max_completion_length: 96
+  max_completion_length: 192   # reason-first responses carry brief working
   temperature: 1.0
   beta: 0.0              # TRL default; KL reference would be the SFT policy if enabled
   loss_type: dapo        # TRL 1.17 default

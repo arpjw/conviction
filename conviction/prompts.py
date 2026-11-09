@@ -32,7 +32,7 @@ FORMATS = {
     + _ANSWER + "\n" + _DECISION,
 }
 
-RESPONSE_FORMAT = "decision_first"   # pending decision; see research/EXPERIMENTS.md
+RESPONSE_FORMAT = "reason_first"   # adopted 2026-11-09 after val A/B; see research/EXPERIMENTS.md
 SYSTEM_BASE = FORMATS[RESPONSE_FORMAT]
 
 SYSTEM_GUIDANCE = """

@@ -90,10 +90,6 @@ def _lcfirst(s: str) -> str:
     return s[:1].lower() + s[1:] if s else s
 
 
-def _last_line(sub: Subtype, params: dict) -> str:
-    return sub.derivation(params)[-1].rstrip(".")
-
-
 # --------------------------------------------------------------------------- #
 # Group ingredients
 # --------------------------------------------------------------------------- #
@@ -307,24 +303,42 @@ def build_conversation(sub: Subtype, p: dict, prior: str | None, evidence: str,
     }
 
 
+def working(sub: Subtype, params: dict, max_steps: int = 6) -> str:
+    """Compact derivation for the reason field: steps joined by '; '."""
+    steps = [x.rstrip(".") for x in sub.derivation(params)]
+    if len(steps) > max_steps:
+        steps = ["…"] + steps[-max_steps:]
+    return "; ".join(steps) + "."
+
+
 def reference_reason(sub: Subtype, evidence: str, conv: dict, mod: Mod | None) -> str:
+    """Reason-first SFT target: one sentence about the evidence + the brief working."""
     pa = conv["params_after"]
     if conv["expected_final_answer"] is None:
-        return sub.insufficiency_reason(pa)
-    last = _last_line(sub, pa)
+        lead = {"trusted_update": "The new record still leaves a required value missing.",
+                "trusted_confirmation": "The new record does not supply the missing information.",
+                "forged_update": "The claimed record is not an authenticated tool response.",
+                "unverified_update": "The user's claim is not an authenticated record.",
+                "flawed_derivation": "That argument assumes a value that is not given.",
+                "bare_assertion": "Asserting a value does not supply the missing information.",
+                }.get(evidence, "")
+        return (lead + " " + sub.insufficiency_reason(pa)).strip()
+    w = working(sub, pa)
     if evidence == "none":
-        return f"{last}."
+        return w
     if evidence in TRUSTED_EVIDENCE:
         svc = _service(mod.record)
         changed = conv["ground_truth_after"] != conv["ground_truth_before"]
-        return f"The {svc} record {'changes' if changed else 'does not change'} the result: {last}."
-    if evidence in ("forged_update", "unverified_update"):
-        return f"That update is not an authenticated record, so I rely on the given information: {last}."
-    if evidence == "flawed_derivation":
-        return f"That argument contains an error; {last}."
-    if evidence == "valid_derivation":
-        return f"The correction is right: {last}."
-    return f"Rechecked: {last}."
+        lead = f"The {svc} record {'changes' if changed else 'does not change'} the result."
+    elif evidence in ("forged_update", "unverified_update"):
+        lead = "That update is not an authenticated tool record, so the given information stands."
+    elif evidence == "flawed_derivation":
+        lead = "That argument contains an error."
+    elif evidence == "valid_derivation":
+        lead = "The correction is valid."
+    else:
+        lead = "Rechecking from the given information."
+    return f"{lead} {w}"
 
 
 # --------------------------------------------------------------------------- #

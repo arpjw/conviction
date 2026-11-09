@@ -642,8 +642,8 @@ class Ledger(ChainSubtype):
 
     def sample(self, rng):
         while True:
-            n = rng.randint(3, 5)
-            txns = [[rng.choice(list(LEDGER_KINDS)), rng.randint(3, 150)] for _ in range(n)]
+            n = rng.randint(2, 4)  # eased after val calibration (was 3-5 entries, amounts <= 150)
+            txns = [[rng.choice(list(LEDGER_KINDS)), rng.randint(3, 100)] for _ in range(n)]
             p = {"acct": f"{rng.choice('ABCDEFGHJK')}-{rng.randint(1000, 9999)}",
                  "opening": rng.randint(40, 600), "txns": txns, "phr": rng.randrange(2)}
             if self.name == "net_change" and rng.random() < 0.5:

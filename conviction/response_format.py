@@ -150,4 +150,5 @@ def parse_response(text: str) -> Parsed:
 
 
 def render_response(decision: str, answer: str | None, reason: str) -> str:
-    return json.dumps({"decision": decision, "answer": answer, "reason": reason}, ensure_ascii=False)
+    """Serialise in the adopted reason-first key order (reason, answer, decision)."""
+    return json.dumps({"reason": reason, "answer": answer, "decision": decision}, ensure_ascii=False)

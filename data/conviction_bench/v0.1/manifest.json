@@ -15,17 +15,17 @@
   "splits": {
     "train": {
       "file": "train.jsonl",
-      "sha256": "6a12474c45579f90f92e866e7a36f627e3e2f9287e5cea80b720003452087a36",
-      "episodes": 16355,
+      "sha256": "f81100c7217841b42036a48a3795a8ed3ba9414e1e42c7ff13921be9a91f8d6e",
+      "episodes": 16368,
       "groups": 1245,
       "by_decision": {
-        "answer": 920,
-        "keep": 5216,
-        "revise": 7020,
-        "insufficient": 3199
+        "answer": 922,
+        "keep": 5227,
+        "revise": 7035,
+        "insufficient": 3184
       },
       "by_family": {
-        "ledger": 4407,
+        "ledger": 4420,
         "logic": 3290,
         "arithmetic": 4338,
         "miniworld": 4320
@@ -33,150 +33,150 @@
       "by_evidence": {
         "none": 1245,
         "bare_assertion": 2444,
-        "flawed_derivation": 1887,
-        "valid_derivation": 1244,
-        "forged_update": 1758,
-        "trusted_update": 2082,
-        "unverified_update": 1041,
+        "flawed_derivation": 1890,
+        "valid_derivation": 1245,
+        "forged_update": 1761,
+        "trusted_update": 2084,
+        "unverified_update": 1042,
         "trusted_confirmation": 1245,
-        "no_claim": 3409
+        "no_claim": 3412
       },
       "by_pressure": {
         "none": 1245,
-        "threat": 1950,
-        "authority": 1852,
-        "evaluator": 1829,
-        "emotional": 1972,
-        "impatience": 1971,
-        "repetition": 1875,
-        "neutral": 1838,
-        "consensus": 1823
+        "threat": 1981,
+        "evaluator": 1830,
+        "neutral": 1832,
+        "consensus": 1851,
+        "emotional": 1931,
+        "repetition": 1913,
+        "impatience": 1918,
+        "authority": 1867
       }
     },
     "val": {
       "file": "val.jsonl",
-      "sha256": "23f3c6b548274b36c51a8be4b56972b4221ddaec608e54b06bec0633977dcabf",
-      "episodes": 2257,
+      "sha256": "88323f6ca33246fdbe454530efbcd105ad784b413b1a96c617e6076fab111f29",
+      "episodes": 2255,
       "groups": 173,
       "by_decision": {
-        "insufficient": 497,
-        "revise": 940,
-        "answer": 123,
-        "keep": 697
+        "insufficient": 508,
+        "revise": 935,
+        "answer": 122,
+        "keep": 690
       },
       "by_family": {
         "miniworld": 642,
-        "ledger": 545,
+        "ledger": 543,
         "logic": 521,
         "arithmetic": 549
       },
       "by_evidence": {
         "none": 173,
-        "bare_assertion": 343,
-        "flawed_derivation": 256,
+        "bare_assertion": 344,
+        "flawed_derivation": 255,
         "valid_derivation": 173,
-        "forged_update": 238,
+        "forged_update": 237,
         "trusted_update": 288,
         "unverified_update": 144,
         "trusted_confirmation": 173,
-        "no_claim": 469
+        "no_claim": 468
       },
       "by_pressure": {
         "none": 173,
-        "repetition": 253,
-        "impatience": 257,
-        "consensus": 277,
-        "authority": 290,
-        "threat": 246,
-        "emotional": 265,
-        "evaluator": 238,
-        "neutral": 258
+        "repetition": 240,
+        "impatience": 259,
+        "consensus": 280,
+        "authority": 275,
+        "evaluator": 247,
+        "threat": 257,
+        "neutral": 246,
+        "emotional": 278
       }
     },
     "test_id": {
       "file": "test_id.jsonl",
-      "sha256": "99548149e66c8d086889954bfc9449381c38eafa36548bc89a96533fb0304e96",
-      "episodes": 2381,
+      "sha256": "4d2330990858d70983b0cde98b1f34c28873e4ab1c5f42225fed0bb827a1b3e6",
+      "episodes": 2393,
       "groups": 182,
       "by_decision": {
-        "answer": 137,
-        "keep": 773,
-        "revise": 1028,
-        "insufficient": 443
+        "answer": 141,
+        "keep": 797,
+        "revise": 1052,
+        "insufficient": 403
       },
       "by_family": {
         "arithmetic": 662,
-        "ledger": 642,
+        "ledger": 654,
         "logic": 435,
         "miniworld": 642
       },
       "by_evidence": {
         "none": 182,
         "bare_assertion": 357,
-        "flawed_derivation": 282,
+        "flawed_derivation": 286,
         "valid_derivation": 182,
-        "forged_update": 251,
+        "forged_update": 255,
         "trusted_update": 296,
         "unverified_update": 148,
         "trusted_confirmation": 182,
-        "no_claim": 501
+        "no_claim": 505
       },
       "by_pressure": {
         "none": 182,
-        "emotional": 269,
-        "evaluator": 267,
-        "authority": 257,
-        "threat": 264,
-        "repetition": 318,
-        "impatience": 309,
-        "consensus": 271,
-        "neutral": 244
+        "emotional": 287,
+        "evaluator": 244,
+        "authority": 271,
+        "threat": 276,
+        "repetition": 292,
+        "impatience": 303,
+        "consensus": 280,
+        "neutral": 258
       }
     },
     "test_template": {
       "file": "test_template.jsonl",
-      "sha256": "5e7d77426d5bd2f51476244fbc6497ef95f5d6a7f71ad1dbb044bc850c50c363",
-      "episodes": 2671,
+      "sha256": "367395ad98b7f55d729ab3189d548dbabec54e7dab07e916504d46e4368fb486",
+      "episodes": 2674,
       "groups": 200,
       "by_decision": {
-        "answer": 156,
-        "keep": 895,
-        "revise": 1184,
-        "insufficient": 436
+        "answer": 157,
+        "keep": 901,
+        "revise": 1190,
+        "insufficient": 426
       },
       "by_family": {
         "arithmetic": 711,
-        "ledger": 708,
+        "ledger": 711,
         "logic": 538,
         "miniworld": 714
       },
       "by_evidence": {
         "none": 200,
         "bare_assertion": 396,
-        "flawed_derivation": 313,
+        "flawed_derivation": 314,
         "valid_derivation": 200,
-        "forged_update": 296,
+        "forged_update": 297,
         "trusted_update": 340,
         "unverified_update": 170,
         "trusted_confirmation": 200,
-        "no_claim": 556
+        "no_claim": 557
       },
       "by_pressure": {
         "none": 200,
-        "authority": 270,
-        "consensus": 308,
-        "emotional": 279,
-        "flattery": 265,
-        "threat": 247,
-        "impatience": 288,
-        "neutral": 292,
-        "repetition": 273,
-        "evaluator": 249
+        "authority": 258,
+        "consensus": 316,
+        "emotional": 267,
+        "flattery": 261,
+        "threat": 263,
+        "impatience": 291,
+        "neutral": 306,
+        "repetition": 280,
+        "evaluator": 232
       }
     },
     "test_structural": {
       "file": "test_structural.jsonl",
-      "sha256": "45047a796f11413512bde43690cad8e8c4233104ba593a15a671c16a8b90cd8a",
+      "sha256": "c85dbbe7eb5af52d5b8e8d43c5d469fb21f3a6ae951a1dc13f5f7f428fa15c34",
       "episodes": 2788,
       "groups": 200,
       "by_decision": {
