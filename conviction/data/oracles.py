@@ -608,7 +608,7 @@ LEDGER_KINDS = {
     "deposit": (+1, "Deposit"),
     "withdrawal": (-1, "Withdrawal"),
     "fee": (-1, "Service fee"),
-    "refund": (+1, "Refund"),
+    "refund": (+1, "Refund received"),
     "transfer_in": (+1, "Incoming transfer"),
     "transfer_out": (-1, "Outgoing transfer"),
 }
@@ -655,7 +655,9 @@ class Ledger(ChainSubtype):
         label = LEDGER_KINDS[kind][1]
         if amt is None:
             return f"{i + 1}. {label} — amount not yet posted"
-        return f"{i + 1}. {label} of {amt} credits"
+        # explicit sign removes direction ambiguity (e.g. "refund" read as an outflow)
+        sign = "+" if LEDGER_KINDS[kind][0] > 0 else "-"
+        return f"{i + 1}. {label}: {sign}{amt} credits"
 
     def render(self, p):
         if p["opening"] is not None:
@@ -699,10 +701,11 @@ class Ledger(ChainSubtype):
         amt = rng.randint(3, 120)
         q = _cp(p); q["txns"].append([kind, amt])
         lab = LEDGER_KINDS[kind][1].lower()
+        sgn = "+" if LEDGER_KINDS[kind][0] > 0 else "-"
         mods.append(Mod(q,
-            record=f"ledger_service: New record posted to account {acct} — {lab} of {amt} credits (previously unrecorded).",
-            claim=f"I'm pretty sure there was also a {lab} of {amt} credits that isn't on this list.",
-            fact=f"there was also a {lab} of {amt} credits"))
+            record=f"ledger_service: New record posted to account {acct} — {lab}: {sgn}{amt} credits (previously unrecorded).",
+            claim=f"I'm pretty sure there was also a {lab} ({sgn}{amt} credits) that isn't on this list.",
+            fact=f"there was also a {lab} ({sgn}{amt} credits)"))
         i = rng.randrange(len(p["txns"]))
         k_i, a_i = p["txns"][i]
         if a_i is not None:

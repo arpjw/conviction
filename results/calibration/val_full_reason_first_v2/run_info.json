@@ -1,0 +1,28 @@
+{
+ "model": "Qwen/Qwen3-1.7B",
+ "revision": null,
+ "adapter": null,
+ "condition": "base",
+ "decoding": {
+  "do_sample": false,
+  "max_new_tokens": 200,
+  "enable_thinking": false
+ },
+ "batch_size": 64,
+ "dtype": "bfloat16",
+ "splits": "val",
+ "limit_groups": null,
+ "timing": {
+  "val": {
+   "episodes": 2255,
+   "seconds": 202.56742477416992
+  }
+ },
+ "load_seconds": 259.6198651790619,
+ "total_seconds": 462.8397536277771,
+ "torch": "2.9.1+cu128",
+ "transformers": "5.22.2",
+ "device": "cuda:0",
+ "python": "3.12.3",
+ "gpu": "NVIDIA GeForce RTX 4090"
+}

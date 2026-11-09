@@ -24,5 +24,12 @@
    "kind": "measured_session"
   }
  ],
- "open": null
+ "open": {
+  "phase": "setup_baseline",
+  "gpu": "RTX 4090 (secure) ptxid828lznevi",
+  "rate": 0.89,
+  "storage_rate": 0.0,
+  "start": 1794261918.2493591,
+  "note": "val v2 + E0/E1 baselines"
+ }
 }

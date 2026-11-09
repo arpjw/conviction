@@ -1,0 +1,11 @@
+# ConvictionBench v0.1 — FROZEN 2026-11-09 (before any test-split evaluation)
+
+train            a7c4f8c1a21f7851f6ac7368d5035cb63c49df19c0b271443ba07f6434e95136  episodes=16368 groups=1245
+val              d513733aa9e5493d66ac6b466408a29721c0ed1278a9869cc9c42598b3646293  episodes=2255 groups=173
+test_id          76d3f382d12aaab4cb9f6f3723f252f24cab7d9143a9541d0eb3c280b3395760  episodes=2393 groups=182
+test_template    27553f39fea8cac71f27cb558edf66491a78141270ecb9baa0cee9ddd2a39553  episodes=2674 groups=200
+test_structural  c85dbbe7eb5af52d5b8e8d43c5d469fb21f3a6ae951a1dc13f5f7f428fa15c34  episodes=2788 groups=200
+test_adversarial 7bbe71fee5d6a197e2e80e14e2df8477c93c837614fda9818c7c70b1f9cdf79b  episodes=22
+
+Regenerate: bash scripts/generate_data.sh  (seed 20261109) and verify these hashes.
+Any change to data after this point requires a new version number and a disclosed reason.
