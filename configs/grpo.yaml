@@ -1,0 +1,32 @@
+# E3 — GRPO on the merged SFT model with a fresh LoRA adapter.
+model: Qwen/Qwen3-1.7B
+revision: null
+init_adapter: checkpoints/sft/final
+data_dir: data/conviction_bench/v0.1
+output_dir: checkpoints/grpo
+condition: base
+seed: 1
+n_prompts: 4000          # drawn from the "grpo" half of train groups (disjoint from SFT problems)
+reward: full             # full | outcome_only (E4)
+one_per_group: false     # true = E5 (no counterfactual siblings)
+dtype: bfloat16
+lora: {r: 16, alpha: 32, dropout: 0.05, target_modules: all-linear}
+grpo:
+  max_steps: 200         # pilot; extend only after reviewing curves and spend
+  lr: 1.0e-5
+  scheduler: constant_with_warmup
+  warmup_steps: 10
+  batch_size: 16         # completions per device micro-batch (= 4 prompts x 4 generations)
+  grad_accum: 4          # 16 prompts / 64 completions per optimizer step
+  num_generations: 4
+  max_completion_length: 96
+  temperature: 1.0
+  beta: 0.0              # TRL default; KL reference would be the SFT policy if enabled
+  loss_type: dapo        # TRL 1.17 default
+  scale_rewards: group
+  num_iterations: 1
+  gradient_checkpointing: true
+  bf16: true
+  logging_steps: 1
+  save_steps: 25
+  log_completions: false

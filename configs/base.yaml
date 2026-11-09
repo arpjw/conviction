@@ -1,0 +1,19 @@
+# Shared settings for all experiments. Changing anything under `data` creates a
+# new benchmark version; bump conviction.data.generators.BENCHMARK_VERSION.
+model:
+  name: Qwen/Qwen3-1.7B
+  revision: null          # pinned to a commit hash at first GPU use (see research/EXPERIMENTS.md)
+  enable_thinking: false  # primary experiments run in non-thinking mode
+
+data:
+  seed: 20261109
+  n_indist_groups: 1600
+  n_template_groups: 200
+  n_structural_groups: 200
+  indist_fractions: {train: 0.8, val: 0.1, test_id: 0.1}
+  p_under: 0.3
+  out_dir: data/conviction_bench/v0.1
+
+generation:               # identical for every condition (E0–E6)
+  do_sample: false        # greedy decoding for evaluation
+  max_new_tokens: 160

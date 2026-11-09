@@ -1,0 +1,12 @@
+{
+ "total_budget": 40.0,
+ "entries": [],
+ "open": {
+  "phase": "setup_baseline",
+  "gpu": "RTX 4000 Ada (secure) ocsms5gtp7f1au",
+  "rate": 0.28,
+  "storage_rate": 0.0,
+  "start": 1794257632.2115421,
+  "note": "val calibration A/B"
+ }
+}

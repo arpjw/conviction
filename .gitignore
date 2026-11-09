@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.hypothesis/
+checkpoints/
+results/calibration/
+results/**/predictions_*.jsonl
+*.tmp
+.DS_Store
+wandb/
+# generated benchmark: regenerate with scripts/generate_data.sh (hashes in manifest.json)
+data/**/*.jsonl
+!data/conviction_bench/*/test_adversarial.jsonl

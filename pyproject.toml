@@ -1,0 +1,43 @@
+[project]
+name = "conviction"
+version = "0.1.0"
+description = "ConvictionBench + training code: evidence-sensitive belief revision in small language models"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    "numpy>=1.26",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+# Installed on the GPU pod (and optionally locally for CPU smoke tests).
+train = [
+    "torch>=2.4",
+    "transformers>=4.51",
+    "trl>=0.19",
+    "peft>=0.15",
+    "accelerate>=1.6",
+    "datasets>=3.5",
+]
+analysis = [
+    "matplotlib>=3.8",
+    "pandas>=2.2",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "hypothesis>=6.100",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["conviction"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

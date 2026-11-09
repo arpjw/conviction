@@ -1,0 +1,26 @@
+# E2 — supervised fine-tuning (LoRA, bf16; no 4-bit: a 1.7B model fits a 24 GB GPU
+# comfortably in bf16, and QLoRA would slow training without a memory need).
+model: Qwen/Qwen3-1.7B
+revision: null
+data_dir: data/conviction_bench/v0.1
+output_dir: checkpoints/sft
+condition: base          # trained with the same system prompt used for E0/E2/E3 evaluation
+seed: 1
+n_train: 4000            # pilot size; stratified by slot from the "sft" half of train groups
+n_val: 400
+dtype: bfloat16
+lora: {r: 16, alpha: 32, dropout: 0.05, target_modules: all-linear}
+training:
+  epochs: 1
+  max_steps: -1
+  batch_size: 16
+  grad_accum: 2          # effective batch 32 -> 125 steps for 4000 episodes
+  lr: 2.0e-4
+  scheduler: cosine
+  warmup_steps: 5
+  max_length: 1024
+  gradient_checkpointing: true
+  bf16: true
+  logging_steps: 5
+  save_steps: 50
+  eval_steps: 25
