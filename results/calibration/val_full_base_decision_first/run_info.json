@@ -1,0 +1,28 @@
+{
+ "model": "Qwen/Qwen3-1.7B",
+ "revision": null,
+ "adapter": null,
+ "condition": "base_decision_first",
+ "decoding": {
+  "do_sample": false,
+  "max_new_tokens": 200,
+  "enable_thinking": false
+ },
+ "batch_size": 64,
+ "dtype": "bfloat16",
+ "splits": "val",
+ "limit_groups": null,
+ "timing": {
+  "val": {
+   "episodes": 2257,
+   "seconds": 458.5429346561432
+  }
+ },
+ "load_seconds": 24.105873107910156,
+ "total_seconds": 483.1725332736969,
+ "torch": "2.15.0+cu132",
+ "transformers": "5.22.2",
+ "device": "cuda:0",
+ "python": "3.12.3",
+ "gpu": "NVIDIA RTX 4000 Ada Generation"
+}

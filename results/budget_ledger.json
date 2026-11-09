@@ -1,12 +1,17 @@
 {
  "total_budget": 40.0,
- "entries": [],
- "open": {
-  "phase": "setup_baseline",
-  "gpu": "RTX 4000 Ada (secure) ocsms5gtp7f1au",
-  "rate": 0.28,
-  "storage_rate": 0.0,
-  "start": 1794257632.2115421,
-  "note": "val calibration A/B"
- }
+ "entries": [
+  {
+   "phase": "setup_baseline",
+   "gpu": "RTX 4000 Ada (secure) ocsms5gtp7f1au",
+   "hours": 0.3744,
+   "rate": 0.28,
+   "cost": 0.1048,
+   "start": 1794257632.2115421,
+   "end": 1794258980.13775,
+   "note": "val calibration A/B val A/B done; 2 failed launches (packaging + watcher)",
+   "kind": "measured_session"
+  }
+ ],
+ "open": null
 }

@@ -4,7 +4,6 @@ __pycache__/
 .pytest_cache/
 .hypothesis/
 checkpoints/
-results/calibration/
 results/**/predictions_*.jsonl
 *.tmp
 .DS_Store

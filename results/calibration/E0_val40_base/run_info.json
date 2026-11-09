@@ -1,0 +1,28 @@
+{
+ "model": "Qwen/Qwen3-1.7B",
+ "revision": null,
+ "adapter": null,
+ "condition": "base",
+ "decoding": {
+  "do_sample": false,
+  "max_new_tokens": 160,
+  "enable_thinking": false
+ },
+ "batch_size": 16,
+ "dtype": "bfloat16",
+ "splits": "val",
+ "limit_groups": 40,
+ "timing": {
+  "val": {
+   "episodes": 530,
+   "seconds": 496.5015649795532
+  }
+ },
+ "load_seconds": 356.44432377815247,
+ "total_seconds": 853.079669713974,
+ "torch": "2.15.0",
+ "transformers": "5.22.2",
+ "device": "mps:0",
+ "python": "3.12.13",
+ "gpu": null
+}
