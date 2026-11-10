@@ -51,21 +51,50 @@ def load_model(model_name: str, adapter: str | None = None, revision: str | None
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
-    tok = AutoTokenizer.from_pretrained(model_name, revision=revision)
+    tok_kw = {"fix_mistral_regex": True} if "mistral" in model_name.lower() else {}
+    tok = AutoTokenizer.from_pretrained(model_name, revision=revision, **tok_kw)
     tok.padding_side = "left"
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
     require_cuda()
     if device is None:
         device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
-    model = AutoModelForCausalLM.from_pretrained(model_name, revision=revision,
-                                                 dtype=getattr(torch, dtype)).to(device)
+    try:
+        model = AutoModelForCausalLM.from_pretrained(model_name, revision=revision, dtype=getattr(torch, dtype))
+    except ValueError as e:
+        # vision-language checkpoints (e.g. Ministral-3) have no CausalLM mapping; use them text-only
+        if "Unrecognized configuration class" not in str(e):
+            raise
+        from transformers import AutoModelForImageTextToText
+        model = AutoModelForImageTextToText.from_pretrained(model_name, revision=revision, dtype=getattr(torch, dtype))
+    model = model.to(device)
     if adapter:  # comma-separated adapters are merged in order (e.g. "sft/final,grpo/final")
         from peft import PeftModel
         for a in adapter.split(","):
             model = PeftModel.from_pretrained(model, a).merge_and_unload()
     model.eval()
     return model, tok
+
+
+OOM_SPLITS: list[int] = []  # batch sizes that hit CUDA OOM and were split (recorded in run_info)
+
+
+def _gen_batch(model, tok, batch: list[str], max_new_tokens: int) -> list[str]:
+    """Greedy-generate one batch; on CUDA OOM, split it in half and retry (results stay greedy)."""
+    import torch
+    try:
+        enc = tok(batch, return_tensors="pt", padding=True, add_special_tokens=False).to(model.device)
+        with torch.no_grad():
+            gen = model.generate(**enc, max_new_tokens=max_new_tokens, do_sample=False, temperature=None,
+                                 top_p=None, top_k=None, pad_token_id=tok.pad_token_id)
+        return tok.batch_decode(gen[:, enc["input_ids"].shape[1]:], skip_special_tokens=True)
+    except torch.cuda.OutOfMemoryError:
+        if len(batch) == 1:
+            raise
+        OOM_SPLITS.append(len(batch))
+        torch.cuda.empty_cache()
+        h = len(batch) // 2
+        return _gen_batch(model, tok, batch[:h], max_new_tokens) + _gen_batch(model, tok, batch[h:], max_new_tokens)
 
 
 def generate(model, tok, prompts: list[str], batch_size: int = 32, max_new_tokens: int = 160,
@@ -77,12 +106,7 @@ def generate(model, tok, prompts: list[str], batch_size: int = 32, max_new_token
     t0 = time.time()
     for b in range(0, len(order), batch_size):
         idx = order[b:b + batch_size]
-        enc = tok([prompts[i] for i in idx], return_tensors="pt", padding=True, add_special_tokens=False).to(model.device)
-        with torch.no_grad():
-            gen = model.generate(**enc, max_new_tokens=max_new_tokens, do_sample=False, temperature=None,
-                                 top_p=None, top_k=None, pad_token_id=tok.pad_token_id)
-        texts = tok.batch_decode(gen[:, enc["input_ids"].shape[1]:], skip_special_tokens=True)
-        for i, t in zip(idx, texts):
+        for i, t in zip(idx, _gen_batch(model, tok, [prompts[i] for i in idx], max_new_tokens)):
             outs[i] = t
         if progress:
             done = min(b + batch_size, len(order))
@@ -168,7 +192,7 @@ def main(argv=None) -> int:
     info = {"model": args.model, "revision": args.revision, "adapter": args.adapter, "condition": args.condition,
             "decoding": {"do_sample": False, "max_new_tokens": args.max_new_tokens, "enable_thinking": False},
             "batch_size": args.batch_size, "dtype": args.dtype, "splits": args.splits,
-            "limit_groups": args.limit_groups, "timing": timing, "load_seconds": t_loaded - t_start,
+            "limit_groups": args.limit_groups, "timing": timing, "oom_splits": OOM_SPLITS, "load_seconds": t_loaded - t_start,
             "total_seconds": time.time() - t_start, "torch": torch.__version__,
             "transformers": transformers.__version__, "device": str(model.device), "python": platform.python_version(),
             "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None}

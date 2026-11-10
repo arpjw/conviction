@@ -76,6 +76,24 @@ case "$1" in
     $RUN -m conviction.evaluation.runner --condition base --adapter $A --splits val --batch-size 64 --max-new-tokens 200 --out results/E6_grpo_base_s2/val
     $RUN -m conviction.evaluation.runner --condition base --adapter $A --splits test_id,test_template,test_structural,test_adversarial --natural --batch-size 64 --max-new-tokens 200 --out results/E6_grpo_base_s2
     tar czf /workspace/adapter_grpo_base_s2.tgz -C checkpoints/grpo_base_s2 final ;;
+  bench)
+    # Multi-model baselines. BENCH_MODELS="org/name[:batch],..." ; each model: 2-group smoke, then full eval.
+    # A failing model is logged (MODEL_FAIL) and skipped; its HF cache is deleted afterwards to save disk.
+    S=test_id,test_template,test_structural,test_adversarial
+    IFS=',' read -ra MS <<< "$BENCH_MODELS"
+    for spec in "${MS[@]}"; do
+      m=${spec%%:*}; bs=${spec#*:}; [ "$bs" = "$spec" ] && bs=32
+      name=B_$(echo "${m#*/}" | tr '.' '_')
+      echo "=== MODEL_START $m (batch $bs) $(date -u +%H:%M:%S)"
+      if $RUN -m conviction.evaluation.runner --model "$m" --condition base --splits test_id --limit-groups 2 --batch-size $bs --max-new-tokens 200 --n-boot 50 --out results/smoke/$name \
+         && $RUN -m conviction.evaluation.runner --model "$m" --condition base --splits $S --natural --batch-size $bs --max-new-tokens 200 --out results/$name; then
+        echo "=== MODEL_DONE $m $(date -u +%H:%M:%S)"
+        tar czf /workspace/results_$name.tgz results/$name results/smoke/$name
+      else
+        echo "=== MODEL_FAIL $m $(date -u +%H:%M:%S)"
+      fi
+      rm -rf "$HF_HOME/hub/models--${m//\//--}"
+    done ;;
 esac
 tar czf /workspace/results_$1.tgz results
 echo PHASE_DONE_$1
