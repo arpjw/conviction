@@ -11,3 +11,4 @@ wandb/
 # generated benchmark: regenerate with scripts/generate_data.sh (hashes in manifest.json)
 data/**/*.jsonl
 !data/conviction_bench/*/test_adversarial.jsonl
+.claude/

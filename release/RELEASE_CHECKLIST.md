@@ -5,24 +5,26 @@
 - [x] Data licence: **CC-BY-4.0**; code Apache-2.0 (decided 2026-11-09)
 - [x] Models: release **both** `conviction-1.7b-sft` (E2) and `conviction-1.7b-rl` (E3b, seed 1; E6 as replicate) (decided 2026-11-09)
 - [x] Venue: **arXiv preprint** (decided 2026-11-09); release benchmark + models + report together after multi-model baselines
-- [ ] Author list and affiliation for the citation
+- [x] Author list for the citation: Arya Somu
 
 ## Benchmark
 - [ ] Human validation: two reviewers fill `research/validation/review_sheet.csv`
       (`python -m conviction.data.review --score a.csv b.csv` for accuracy + agreement)
 - [ ] Fix any defects found → **v0.2** with changelog (v0.1 stays frozen; all reported numbers are v0.1)
-- [ ] Generate a canary GUID; add a `canary` field to every released record; record both the raw
+- [x] Generate a canary GUID; add a `canary` field to every released record; record both the raw
       (FROZEN.txt) and released-file hashes
-- [ ] Upload splits + `FROZEN.txt` + `DATASET_CARD.md` to the HF dataset repo
-- [ ] Multi-model baselines: see `release/MODEL_SHORTLIST.md` (10-model bench proposed 2026-11-10);
+- [x] Upload splits + `FROZEN.txt` + `DATASET_CARD.md` to the HF dataset repo (2026-11-10; gated, auto-approve, no-training agreement)
+- [x] Multi-model baselines: see `release/MODEL_SHORTLIST.md` (10-model bench proposed 2026-11-10);
       check each chat template supports the `tool` role before running
 
+- [x] Private held-out split (secret seed, offline at ~/conviction-private); hashes in `release/PRIVATE_SPLIT_COMMITMENT.txt`
+
 ## Models
-- [ ] Upload chosen adapter(s) with `MODEL_CARD.md`, adapter config, and the exact system prompt
+- [x] Upload chosen adapter(s) with `MODEL_CARD.md`, adapter config, and the exact system prompt
 - [x] Fill the E6 (second seed) row
 
 ## Code / reproducibility
-- [ ] README: results summary, figures, reproduction commands (`conviction-generate`, `conviction-eval`,
+- [x] README: results summary, figures, reproduction commands (`conviction-generate`, `conviction-eval`,
       `scripts/remote_phase.sh <phase>`), compute ledger
 - [ ] Tag the release commit; archive on Zenodo for a DOI
 
