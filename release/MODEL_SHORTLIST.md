@@ -22,7 +22,7 @@ test splits + natural history (same as E0). Qwen3-1.7B (E0) is already done.
 
 | Model | Blocker | Fix |
 |---|---|---|
-| `meta-llama/Llama-3.2-3B-Instruct`, `meta-llama/Llama-3.1-8B-Instruct` | Gated repo | Arya accepts the Meta licence on HF and logs the pod in with his own read token (I won't handle the token) |
+| `meta-llama/Llama-3.2-3B-Instruct`, `meta-llama/Llama-3.1-8B-Instruct` | Gated repo | Arya accepts the Meta licence on HF and logs the pod in with their own read token (I won't handle the token) |
 | `google/gemma-3-4b-it` (optionally 12B) | Template rejects the `tool` role | Per-model message adapter: render the record as a clearly labelled block (e.g. a fixed `[Authenticated record from <service>]` header). Results flagged "adapted channel" |
 | `mistralai/Mistral-7B-Instruct-v0.3` | Template requires tool-call IDs | Adapter: synthesise an assistant tool call + 9-char `tool_call_id` before each record (arguably more realistic). Flagged "adapted channel" |
 
