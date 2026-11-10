@@ -79,5 +79,12 @@
    "kind": "measured_session"
   }
  ],
- "open": null
+ "open": {
+  "phase": "eval_ablation",
+  "gpu": "RTX 4090 (secure) mj0o8qte8teh9d",
+  "rate": 0.89,
+  "storage_rate": 0.0,
+  "start": 1794290303.24403,
+  "note": "E6 second seed of E3b"
+ }
 }

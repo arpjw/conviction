@@ -1,5 +1,6 @@
 """Evaluate a model (optionally with a LoRA adapter) on ConvictionBench.
 
+    conviction-eval --model <hf-model-id> [--adapter path[,path]] --out results/<name>
     python -m conviction.evaluation.runner --model Qwen/Qwen3-1.7B --condition base \
         --splits test_id,test_template,test_structural,test_adversarial --out results/E0
 
@@ -117,6 +118,10 @@ def main(argv=None) -> int:
     ap.add_argument("--out", required=True)
     args = ap.parse_args(argv)
 
+    missing = [s for s in args.splits.split(",") if not (Path(args.data_dir) / f"{s}.jsonl").exists()]
+    if missing:
+        raise SystemExit(f"missing splits {missing} in {args.data_dir}: run `conviction-generate` first "
+                         "(regenerates ConvictionBench v0.1 deterministically; verify against FROZEN.txt)")
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     t_start = time.time()

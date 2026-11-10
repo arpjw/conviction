@@ -10,6 +10,11 @@ dependencies = [
     "pyyaml>=6.0",
 ]
 
+[project.scripts]
+conviction-generate = "conviction.data.cli:main"
+conviction-eval = "conviction.evaluation.runner:main"
+conviction-report = "conviction.analysis.report:main"
+
 [project.optional-dependencies]
 # Installed on the GPU pod (and optionally locally for CPU smoke tests).
 train = [
