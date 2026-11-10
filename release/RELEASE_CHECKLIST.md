@@ -14,7 +14,7 @@
 - [ ] Generate a canary GUID; add a `canary` field to every released record; record both the raw
       (FROZEN.txt) and released-file hashes
 - [ ] Upload splits + `FROZEN.txt` + `DATASET_CARD.md` to the HF dataset repo
-- [ ] Multi-model baselines: see `release/MODEL_SHORTLIST.md` (Tier 1 pre-selected 2026-11-10);
+- [ ] Multi-model baselines: see `release/MODEL_SHORTLIST.md` (10-model bench proposed 2026-11-10);
       check each chat template supports the `tool` role before running
 
 ## Models
