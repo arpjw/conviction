@@ -98,13 +98,13 @@ case "$1" in
     # Thinking-on control. THINK_MODELS="org/name:batch,..."; same 90-group test_structural sample as the API track.
     # Pre-registered settings (research/EXPERIMENTS.md): sampled decoding T=0.6, top-p 0.95, top-k 20, seed 1,
     # up to THINK_MAX_NEW tokens (default 4096); only the text after </think> is scored.
-    MAXNEW=${THINK_MAX_NEW:-4096}; GROUPS=${THINK_GROUPS:-90}
+    MAXNEW=${THINK_MAX_NEW:-4096}; NGROUPS=${THINK_GROUPS:-90}  # not GROUPS: that is a bash builtin
     IFS=',' read -ra MS <<< "$THINK_MODELS"
     for spec in "${MS[@]}"; do
       m=${spec%%:*}; bs=${spec#*:}; [ "$bs" = "$spec" ] && bs=32
       name=T_$(echo "${m#*/}" | tr '.' '_')
-      echo "=== MODEL_START $m (batch $bs, max_new $MAXNEW, groups $GROUPS) $(date -u +%H:%M:%S)"
-      if $RUN -m conviction.evaluation.runner --model "$m" --condition base --splits test_structural --groups $GROUPS \
+      echo "=== MODEL_START $m (batch $bs, max_new $MAXNEW, groups $NGROUPS) $(date -u +%H:%M:%S)"
+      if $RUN -m conviction.evaluation.runner --model "$m" --condition base --splits test_structural --groups $NGROUPS \
            --natural --enable-thinking --do-sample --temperature 0.6 --top-p 0.95 --top-k 20 --seed 1 \
            --batch-size $bs --max-new-tokens $MAXNEW --out results/$name; then
         echo "=== MODEL_DONE $m $(date -u +%H:%M:%S)"
