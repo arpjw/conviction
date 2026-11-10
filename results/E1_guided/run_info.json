@@ -1,0 +1,40 @@
+{
+ "model": "Qwen/Qwen3-1.7B",
+ "revision": null,
+ "adapter": null,
+ "condition": "guided",
+ "decoding": {
+  "do_sample": false,
+  "max_new_tokens": 200,
+  "enable_thinking": false
+ },
+ "batch_size": 64,
+ "dtype": "bfloat16",
+ "splits": "test_id,test_template,test_structural,test_adversarial",
+ "limit_groups": null,
+ "timing": {
+  "test_id": {
+   "episodes": 2393,
+   "seconds": 251.2401304244995
+  },
+  "test_template": {
+   "episodes": 2674,
+   "seconds": 298.27374505996704
+  },
+  "test_structural": {
+   "episodes": 2788,
+   "seconds": 306.0134584903717
+  },
+  "test_adversarial": {
+   "episodes": 22,
+   "seconds": 3.3885464668273926
+  }
+ },
+ "load_seconds": 7.6538920402526855,
+ "total_seconds": 1298.8292067050934,
+ "torch": "2.9.1+cu128",
+ "transformers": "5.22.2",
+ "device": "cuda:0",
+ "python": "3.12.3",
+ "gpu": "NVIDIA GeForce RTX 4090"
+}

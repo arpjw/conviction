@@ -22,14 +22,18 @@
    "end": 1794261796.999188,
    "note": "val v2 + E0/E1 baselines BROKEN HOST: CUDA unknown error / NVIDIA_VISIBLE_DEVICES=void; no usable output",
    "kind": "measured_session"
+  },
+  {
+   "phase": "setup_baseline",
+   "gpu": "RTX 4090 (secure) ptxid828lznevi",
+   "hours": 2.9523,
+   "rate": 0.89,
+   "cost": 2.6275,
+   "start": 1794261918.2493591,
+   "end": 1794272546.423912,
+   "note": "val v2 + E0/E1 baselines val v2 (frozen) + E0/E1 baselines OK; ~15 min idle after finish (watcher missed marker)",
+   "kind": "measured_session"
   }
  ],
- "open": {
-  "phase": "setup_baseline",
-  "gpu": "RTX 4090 (secure) ptxid828lznevi",
-  "rate": 0.89,
-  "storage_rate": 0.0,
-  "start": 1794261918.2493591,
-  "note": "val v2 + E0/E1 baselines"
- }
+ "open": null
 }
