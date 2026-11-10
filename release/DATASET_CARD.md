@@ -117,7 +117,7 @@ first answer.
 A further held-out test set was generated with the same generator and settings but a **secret seed**, and is never
 published. It is used to score models and to detect contamination of the public splits: a model that has trained on public
 items should score markedly higher on the public splits than on the private one. `PRIVATE_SPLIT_COMMITMENT.txt` holds the
-SHA-256 hashes of the private files as of 2026-11-10 (540 groups, disjoint from every public problem). To have a model
+SHA-256 hashes of the private files as of 2026-11-10 (538 groups, disjoint from every public problem). To have a model
 scored on it, open an issue on the code repository.
 
 ## Baseline results (non-thinking, greedy, ≤ 200 new tokens)
