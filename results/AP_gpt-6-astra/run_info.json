@@ -1,0 +1,44 @@
+{
+ "track": "api",
+ "status": "complete",
+ "provider": "openai",
+ "model": "gpt-6-astra",
+ "base_url": null,
+ "effort": null,
+ "temperature": null,
+ "extra_request_fields": null,
+ "max_output_tokens": 16000,
+ "condition": "base",
+ "splits": "test_structural",
+ "groups_per_split": 90,
+ "sample_seed": 20261110,
+ "natural": true,
+ "data_dir": "<private held-out split; hashes in release/PRIVATE_SPLIT_COMMITMENT.txt>",
+ "tool_channel": "native provider tool calls (convert.py)",
+ "prices_usd_per_mtok": {
+  "input": 10.0,
+  "output": 50.0
+ },
+ "usage_new": {
+  "input_tokens": 739854,
+  "output_tokens": 112896,
+  "calls": 1781,
+  "cached_responses": 0,
+  "usd": 13.0433
+ },
+ "stop_reasons_new": {
+  "completed": 1781
+ },
+ "timing": {
+  "test_structural": {
+   "episodes": 1255,
+   "seconds": 660.9218938350677
+  }
+ },
+ "total_seconds": 660.9262561798096,
+ "python": "3.12.13",
+ "sdk": {
+  "anthropic": "2.8.0",
+  "openai": "3.49.0"
+ }
+}

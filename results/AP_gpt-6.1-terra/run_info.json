@@ -1,0 +1,44 @@
+{
+ "track": "api",
+ "status": "complete",
+ "provider": "openai",
+ "model": "gpt-6.1-terra",
+ "base_url": null,
+ "effort": null,
+ "temperature": null,
+ "extra_request_fields": null,
+ "max_output_tokens": 16000,
+ "condition": "base",
+ "splits": "test_structural",
+ "groups_per_split": 90,
+ "sample_seed": 20261110,
+ "natural": true,
+ "data_dir": "<private held-out split; hashes in release/PRIVATE_SPLIT_COMMITMENT.txt>",
+ "tool_channel": "native provider tool calls (convert.py)",
+ "prices_usd_per_mtok": {
+  "input": 1.0,
+  "output": 5.0
+ },
+ "usage_new": {
+  "input_tokens": 712563,
+  "output_tokens": 137597,
+  "calls": 1781,
+  "cached_responses": 0,
+  "usd": 1.4005
+ },
+ "stop_reasons_new": {
+  "completed": 1781
+ },
+ "timing": {
+  "test_structural": {
+   "episodes": 1255,
+   "seconds": 505.8713889122009
+  }
+ },
+ "total_seconds": 505.87584495544434,
+ "python": "3.12.13",
+ "sdk": {
+  "anthropic": "2.8.0",
+  "openai": "3.49.0"
+ }
+}

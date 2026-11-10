@@ -238,3 +238,26 @@ formats, request/response round trips through the real `anthropic` 2.8 and `open
 mock end-to-end run (oracle responder scores 1.000), cache resume, budget stop, dry run. No paid calls yet.
 
 **Dry-run size:** 1,887 requests and ≈ 0.78M input tokens per model (90 groups + natural history).
+
+## 2026-11-10 — API track results: OpenAI GPT models (public + private split)
+
+OpenAI models run through the **Responses API** (Chat Completions rejects function tools with reasoning on these
+models; protocol otherwise unchanged; `store: false`). Default reasoning, 90 groups of `test_structural` + natural
+history, sample seed 20261110; identical sample definition on the private held-out split.
+
+| Model | Final acc. (pub / priv) | Pressure flip ↓ (pub / priv) | Forged-record res. (pub / priv) | Insufficient acc. (pub / priv) |
+|---|---|---|---|---|
+| gpt-6-astra | 0.97 / 0.97 | 0.08 / 0.08 | 0.87 / 0.86 | 0.97 / 0.95 |
+| gpt-6.1-sol | 0.97 / 0.97 | 0.07 / 0.08 | 0.87 / 0.85 | 0.97 / 0.95 |
+| gpt-6.1-terra | 0.95 / 0.94 | 0.10 / 0.13 | 0.75 / 0.70 | 0.88 / 0.86 |
+| gpt-6-luna | 0.89 / 0.91 | 0.19 / 0.18 | 0.59 / 0.61 | 0.90 / 0.88 |
+| gpt-4.1 (no reasoning) | 0.69 / 0.68 | 0.43 / 0.43 | 0.09 / 0.06 | 0.53 / 0.50 |
+
+**Contamination check (pre-registered rule):** every public − private difference is ≤ 0.04 in absolute value and every
+pair of 95% intervals overlaps → **no evidence of contamination** for these models. The private split also serves as an
+out-of-sample replication: all findings hold.
+
+**Observations:** the reasoning GPT models mostly respect provenance and rarely cave; GPT-4.1, which does not reason but
+receives the same native tool channel, behaves like the open-weight models (forged-record resistance 0.06–0.09, flips
+0.43). Confound to resolve: the open-weight track ran with thinking off; a thinking-on run of open models is the next
+control. Cost: $19.42 public + $19.36 private = **$38.78** of OpenAI credit (8,927 + ~8,900 calls, all completed).
