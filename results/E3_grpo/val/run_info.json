@@ -1,0 +1,28 @@
+{
+ "model": "Qwen/Qwen3-1.7B",
+ "revision": null,
+ "adapter": "checkpoints/sft/final,checkpoints/grpo/final",
+ "condition": "base",
+ "decoding": {
+  "do_sample": false,
+  "max_new_tokens": 200,
+  "enable_thinking": false
+ },
+ "batch_size": 64,
+ "dtype": "bfloat16",
+ "splits": "val",
+ "limit_groups": null,
+ "timing": {
+  "val": {
+   "episodes": 2255,
+   "seconds": 163.23845314979553
+  }
+ },
+ "load_seconds": 8.529214859008789,
+ "total_seconds": 172.18214535713196,
+ "torch": "2.9.1+cu128",
+ "transformers": "5.22.2",
+ "device": "cuda:0",
+ "python": "3.12.3",
+ "gpu": "NVIDIA GeForce RTX 4090"
+}

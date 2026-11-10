@@ -44,6 +44,17 @@
    "end": 1794275452.9341109,
    "note": "E2 SFT smoke+full+eval E2 SFT smoke+full+eval OK",
    "kind": "measured_session"
+  },
+  {
+   "phase": "grpo",
+   "gpu": "RTX 4090 (secure) 96bu2bcu4xo28b",
+   "hours": 1.3095,
+   "rate": 0.89,
+   "cost": 1.1655,
+   "start": 1794275580.53697,
+   "end": 1794280294.879141,
+   "note": "E3 GRPO smoke+pilot+eval E3 GRPO smoke+pilot(200 steps)+eval OK; ~10 min lost to slow proxy upload",
+   "kind": "measured_session"
   }
  ],
  "open": null
