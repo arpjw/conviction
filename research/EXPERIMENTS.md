@@ -261,3 +261,27 @@ out-of-sample replication: all findings hold.
 receives the same native tool channel, behaves like the open-weight models (forged-record resistance 0.06–0.09, flips
 0.43). Confound to resolve: the open-weight track ran with thinking off; a thinking-on run of open models is the next
 control. Cost: $19.42 public + $19.36 private = **$38.78** of OpenAI credit (8,927 + ~8,900 calls, all completed).
+
+## 2026-11-10 — T: thinking-on control (pre-registration)
+
+**Question:** is reasoning what separates the GPT API results from the open-weight track (which ran non-thinking)?
+
+**Design:** paired, within-model. Models: Qwen3-1.7B (our base), Qwen3-8B, Qwen3.5-9B, Granite-4.2-8B. Thinking **on**,
+evaluated on the same 90-group `test_structural` sample as the API track (`--groups 90 --sample-seed 20261110`) plus
+the natural-history battery. The thinking-**off** comparison is each model's existing greedy run restricted to the
+identical episodes (a subset of the full-split predictions), so differences are paired at the episode level.
+
+**Settings (fixed before running):** chat template with `enable_thinking=True`; sampled decoding T = 0.6, top-p 0.95,
+top-k 20, torch seed 1 (Qwen's guidance: greedy decoding loops in thinking mode); `max_new_tokens` 4096 unless the smoke
+test shows truncation, in which case the limit and the truncation rate are reported. Only the text after the last
+`</think>` is scored (`runner.split_thinking`); unfinished thinking is scored as a failure and reported separately.
+
+**Hypothesis H-T:** thinking raises forged-record resistance and lowers the pressure-flip rate. Supported for a model if
+the paired cluster-bootstrap 95% interval of (thinking − non-thinking) excludes zero in that direction. Also reported:
+final accuracy, legitimate correction, insufficient-information accuracy, mean generated tokens.
+
+**Note on comparability:** thinking-on uses sampled decoding, thinking-off greedy; the contrast is therefore
+"default thinking configuration vs non-thinking", which is the deployment-relevant comparison.
+
+**Budget:** smoke test (Qwen3-1.7B, 2 groups) first; full runs only after re-quoting from measured thinking length.
+Planned ≈ $10–12 RunPod (2 × RTX PRO 6000).

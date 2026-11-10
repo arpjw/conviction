@@ -38,6 +38,20 @@ def render_prompt(tokenizer, episode_messages: list[dict], condition: str, enabl
                                          add_generation_prompt=True, enable_thinking=enable_thinking)
 
 
+def split_thinking(raw: str, prompt: str) -> tuple[str, bool]:
+    """Separate the final answer from a thinking-mode generation.
+
+    Returns (final_text, finished). The answer is whatever follows the last ``</think>``. If thinking was
+    opened (in the output, or by the chat template at the end of the prompt) but never closed, the model ran
+    out of tokens while thinking: the answer is empty and ``finished`` is False. Output with no thinking
+    block at all is returned unchanged."""
+    if "</think>" in raw:
+        return raw.rsplit("</think>", 1)[1].strip(), True
+    if "<think>" in raw or prompt.rstrip().endswith("<think>"):
+        return "", False
+    return raw, True
+
+
 def require_cuda() -> None:
     """Abort if CONVICTION_REQUIRE_CUDA=1 and no CUDA device is visible (prevents silent CPU fallback on pods)."""
     import os
@@ -85,38 +99,52 @@ def load_model(model_name: str, adapter: str | None = None, revision: str | None
 OOM_SPLITS: list[int] = []  # batch sizes that hit CUDA OOM and were split (recorded in run_info)
 
 
-def _gen_batch(model, tok, batch: list[str], max_new_tokens: int) -> list[str]:
+def _gen_batch(model, tok, batch: list[str], max_new_tokens: int, gen_kwargs: dict | None = None,
+               lengths: list | None = None) -> list[str]:
     """Greedy-generate one batch; on CUDA OOM, split it in half and retry (results stay greedy)."""
     import torch
     try:
         enc = tok(batch, return_tensors="pt", padding=True, add_special_tokens=False).to(model.device)
+        kw = gen_kwargs or {"do_sample": False, "temperature": None, "top_p": None, "top_k": None}
         with torch.no_grad():
-            gen = model.generate(**enc, max_new_tokens=max_new_tokens, do_sample=False, temperature=None,
-                                 top_p=None, top_k=None, pad_token_id=tok.pad_token_id)
-        return tok.batch_decode(gen[:, enc["input_ids"].shape[1]:], skip_special_tokens=True)
+            gen = model.generate(**enc, max_new_tokens=max_new_tokens, pad_token_id=tok.pad_token_id, **kw)
+        new = gen[:, enc["input_ids"].shape[1]:]
+        if lengths is not None:  # generated tokens per row (up to and including the first EOS)
+            eos = set(x for x in [tok.eos_token_id, tok.pad_token_id] if x is not None)
+            for row in new.tolist():
+                n = next((i + 1 for i, t in enumerate(row) if t in eos), len(row))
+                lengths.append(n)
+        return tok.batch_decode(new, skip_special_tokens=True)
     except torch.cuda.OutOfMemoryError:
         if len(batch) == 1:
             raise
         OOM_SPLITS.append(len(batch))
         torch.cuda.empty_cache()
         h = len(batch) // 2
-        return _gen_batch(model, tok, batch[:h], max_new_tokens) + _gen_batch(model, tok, batch[h:], max_new_tokens)
+        return (_gen_batch(model, tok, batch[:h], max_new_tokens, gen_kwargs, lengths)
+                + _gen_batch(model, tok, batch[h:], max_new_tokens, gen_kwargs, lengths))
 
 
 def generate(model, tok, prompts: list[str], batch_size: int = 32, max_new_tokens: int = 160,
-             progress: bool = True) -> list[str]:
+             progress: bool = True, gen_kwargs: dict | None = None, lengths_out: list | None = None) -> list[str]:
     import torch
 
     order = sorted(range(len(prompts)), key=lambda i: len(prompts[i]))
     outs: list[str | None] = [None] * len(prompts)
+    lens: list[int | None] = [None] * len(prompts)
     t0 = time.time()
     for b in range(0, len(order), batch_size):
         idx = order[b:b + batch_size]
-        for i, t in zip(idx, _gen_batch(model, tok, [prompts[i] for i in idx], max_new_tokens)):
+        bl: list[int] = []
+        for i, t in zip(idx, _gen_batch(model, tok, [prompts[i] for i in idx], max_new_tokens, gen_kwargs, bl)):
             outs[i] = t
+        for i, n in zip(idx, bl):
+            lens[i] = n
         if progress:
             done = min(b + batch_size, len(order))
             print(f"  generated {done}/{len(order)}  ({time.time() - t0:.0f}s)", flush=True)
+    if lengths_out is not None:
+        lengths_out.extend(lens)
     return outs  # type: ignore[return-value]
 
 
@@ -145,6 +173,15 @@ def main(argv=None) -> int:
     ap.add_argument("--max-new-tokens", type=int, default=160)
     ap.add_argument("--n-boot", type=int, default=2000)
     ap.add_argument("--dtype", default="bfloat16")
+    ap.add_argument("--enable-thinking", action="store_true",
+                    help="thinking mode: the reasoning before </think> is removed and only the final answer is scored")
+    ap.add_argument("--groups", type=int, default=0, help="sample this many whole problem groups per split (0 = all)")
+    ap.add_argument("--sample-seed", type=int, default=20261110)
+    ap.add_argument("--do-sample", action="store_true", help="sample instead of greedy decoding")
+    ap.add_argument("--temperature", type=float, default=None)
+    ap.add_argument("--top-p", type=float, default=None)
+    ap.add_argument("--top-k", type=int, default=None)
+    ap.add_argument("--seed", type=int, default=0, help="torch seed (only matters with --do-sample)")
     ap.add_argument("--out", required=True)
     args = ap.parse_args(argv)
 
@@ -157,29 +194,56 @@ def main(argv=None) -> int:
     t_start = time.time()
     model, tok = load_model(args.model, args.adapter, args.revision, args.dtype)
     t_loaded = time.time()
+    import torch
+    torch.manual_seed(args.seed)
+    gen_kwargs = ({"do_sample": True, "temperature": args.temperature, "top_p": args.top_p, "top_k": args.top_k}
+                  if args.do_sample else None)
+    think_stats: dict = {}
+
+    def run_episodes(eps_, label):
+        prompts_ = [render_prompt(tok, e["messages"], args.condition, args.enable_thinking) for e in eps_]
+        lens: list[int] = []
+        raws_ = generate(model, tok, prompts_, args.batch_size, args.max_new_tokens, gen_kwargs=gen_kwargs,
+                         lengths_out=lens)
+        recs_ = []
+        unfinished = 0
+        for e, p, r, n in zip(eps_, prompts_, raws_, lens):
+            final, finished = split_thinking(r, p) if args.enable_thinking else (r, True)
+            rec = M.score_record(e, final)
+            rec["gen_tokens"] = n
+            if args.enable_thinking:
+                rec["raw_full"] = r
+                rec["think_finished"] = finished
+                unfinished += not finished
+            recs_.append(rec)
+        think_stats[label] = {"episodes": len(eps_), "mean_gen_tokens": sum(lens) / max(1, len(lens)),
+                              "max_gen_tokens": max(lens) if lens else 0,
+                              "hit_max_new_tokens": sum(n >= args.max_new_tokens for n in lens),
+                              "thinking_unfinished": unfinished}
+        return recs_
     all_metrics, rows_csv, timing = {}, [], {}
     for split in args.splits.split(","):
         eps = load_split(Path(args.data_dir), split)
+        if args.groups:
+            from conviction.evaluation.sampling import sample_groups
+            eps = sample_groups(eps, args.groups, args.sample_seed)
         if args.limit_groups:
             keep = sorted({e["group_id"] for e in eps})[: args.limit_groups]
             eps = [e for e in eps if e["group_id"] in set(keep)]
-        prompts = [render_prompt(tok, e["messages"], args.condition) for e in eps]
         t0 = time.time()
-        raws = generate(model, tok, prompts, args.batch_size, args.max_new_tokens)
+        recs = run_episodes(eps, split)
         timing[split] = {"episodes": len(eps), "seconds": time.time() - t0}
-        recs = [M.score_record(e, r) for e, r in zip(eps, raws)]
         _write_jsonl(out / f"predictions_{split}.jsonl", recs)
         all_metrics[split] = evaluate_records(recs, args.n_boot)
         bd = {k: M.breakdown(recs, k, BREAKDOWN_METRICS) for k in BREAKDOWN_KEYS}
         json.dump(bd, open(out / f"breakdown_{split}.json", "w"), indent=1)
 
         if args.natural:
+            # the model's own first answer (final answer only, in thinking mode) becomes the prior
             clean = {r["group_id"]: (e, r["raw"]) for e, r in zip(eps, recs) if e["slot"] == "clean"}
             nat_eps = [x for e, raw in clean.values() for x in natural_battery(e, raw)]
             if nat_eps:
-                nprompts = [render_prompt(tok, e["messages"], args.condition) for e in nat_eps]
-                nraws = generate(model, tok, nprompts, args.batch_size, args.max_new_tokens)
-                nrecs = [M.score_record(e, r) for e, r in zip(nat_eps, nraws)]
+                nrecs = run_episodes(nat_eps, f"{split}_natural")
                 _write_jsonl(out / f"predictions_{split}_natural.jsonl", nrecs)
                 all_metrics[f"{split}_natural"] = {"all": bootstrap(nrecs, n_boot=args.n_boot)}
 
@@ -196,7 +260,10 @@ def main(argv=None) -> int:
 
     import torch, transformers  # noqa: E401
     info = {"model": args.model, "revision": args.revision, "adapter": args.adapter, "condition": args.condition,
-            "decoding": {"do_sample": False, "max_new_tokens": args.max_new_tokens, "enable_thinking": False},
+            "decoding": {"do_sample": args.do_sample, "temperature": args.temperature, "top_p": args.top_p,
+                         "top_k": args.top_k, "seed": args.seed, "max_new_tokens": args.max_new_tokens,
+                         "enable_thinking": args.enable_thinking},
+            "groups_per_split": args.groups, "sample_seed": args.sample_seed, "generation_stats": think_stats,
             "batch_size": args.batch_size, "dtype": args.dtype, "splits": args.splits,
             "limit_groups": args.limit_groups, "timing": timing, "oom_splits": OOM_SPLITS, "load_seconds": t_loaded - t_start,
             "total_seconds": time.time() - t_start, "torch": torch.__version__,

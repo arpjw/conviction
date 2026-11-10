@@ -94,6 +94,26 @@ case "$1" in
       fi
       rm -rf "$HF_HOME/hub/models--${m//\//--}"
     done ;;
+  think)
+    # Thinking-on control. THINK_MODELS="org/name:batch,..."; same 90-group test_structural sample as the API track.
+    # Pre-registered settings (research/EXPERIMENTS.md): sampled decoding T=0.6, top-p 0.95, top-k 20, seed 1,
+    # up to THINK_MAX_NEW tokens (default 4096); only the text after </think> is scored.
+    MAXNEW=${THINK_MAX_NEW:-4096}; GROUPS=${THINK_GROUPS:-90}
+    IFS=',' read -ra MS <<< "$THINK_MODELS"
+    for spec in "${MS[@]}"; do
+      m=${spec%%:*}; bs=${spec#*:}; [ "$bs" = "$spec" ] && bs=32
+      name=T_$(echo "${m#*/}" | tr '.' '_')
+      echo "=== MODEL_START $m (batch $bs, max_new $MAXNEW, groups $GROUPS) $(date -u +%H:%M:%S)"
+      if $RUN -m conviction.evaluation.runner --model "$m" --condition base --splits test_structural --groups $GROUPS \
+           --natural --enable-thinking --do-sample --temperature 0.6 --top-p 0.95 --top-k 20 --seed 1 \
+           --batch-size $bs --max-new-tokens $MAXNEW --out results/$name; then
+        echo "=== MODEL_DONE $m $(date -u +%H:%M:%S)"
+        tar czf /workspace/results_$name.tgz results/$name
+      else
+        echo "=== MODEL_FAIL $m $(date -u +%H:%M:%S)"
+      fi
+      rm -rf "$HF_HOME/hub/models--${m//\//--}"
+    done ;;
 esac
 tar czf /workspace/results_$1.tgz results
 echo PHASE_DONE_$1

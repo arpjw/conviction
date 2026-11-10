@@ -21,7 +21,6 @@ import csv
 import hashlib
 import json
 import platform
-import random
 import time
 from collections import defaultdict
 from pathlib import Path
@@ -33,32 +32,12 @@ from conviction.evaluation.api.providers import PROVIDERS, make_provider
 from conviction.evaluation.natural import natural_battery
 from conviction.evaluation.runner import BREAKDOWN_KEYS, BREAKDOWN_METRICS, evaluate_records
 from conviction.evaluation.statistics import bootstrap
+from conviction.evaluation.sampling import sample_groups  # noqa: F401  (re-exported for tests)
 from conviction.prompts import build_messages
 
 
 class BudgetExceeded(RuntimeError):
     pass
-
-
-def sample_groups(eps: list[dict], n_groups: int | None, seed: int) -> list[dict]:
-    """Keep every episode of ``n_groups`` problem groups, stratified round-robin across subtypes
-    (whole groups are kept so cluster-bootstrap intervals stay valid)."""
-    if not n_groups:
-        return eps
-    by_sub: dict[str, list[str]] = defaultdict(list)
-    for gid, sub in sorted({(e["group_id"], e["subtype"]) for e in eps}):
-        by_sub[sub].append(gid)
-    rng = random.Random(seed)
-    for gids in by_sub.values():
-        rng.shuffle(gids)
-    chosen: list[str] = []
-    subs = sorted(by_sub)
-    while len(chosen) < n_groups and any(by_sub.values()):
-        for s in subs:
-            if by_sub[s] and len(chosen) < n_groups:
-                chosen.append(by_sub[s].pop())
-    keep = set(chosen)
-    return [e for e in eps if e["group_id"] in keep]
 
 
 class Cache:
