@@ -55,6 +55,18 @@ case "$1" in
     $RUN -m conviction.evaluation.runner --condition base --adapter $A --splits val --batch-size 64 --max-new-tokens 200 --out results/E3c_sft_control/val
     $RUN -m conviction.evaluation.runner --condition base --adapter $A --splits test_id,test_template,test_structural,test_adversarial --natural --batch-size 64 --max-new-tokens 200 --out results/E3c_sft_control
     tar czf /workspace/adapter_sft_control.tgz -C checkpoints/sft_control final ;;
+  grpo_base)
+    $RUN -m conviction.training.train_grpo --config configs/grpo_from_base.yaml --override output_dir=checkpoints/grpo_base_smoke grpo.max_steps=3 grpo.save_steps=1000
+    mkdir -p results/E3b_grpo_base && cp checkpoints/grpo_base_smoke/train_info.json results/E3b_grpo_base/smoke_train_info.json
+    $RUN scripts/grpo_gate.py checkpoints/grpo_base_smoke/train_info.json
+    echo SMOKE_OK
+    $RUN -m conviction.training.train_grpo --config configs/grpo_from_base.yaml
+    echo TRAIN_OK
+    cp checkpoints/grpo_base/train_info.json results/E3b_grpo_base/
+    A=checkpoints/grpo_base/final
+    $RUN -m conviction.evaluation.runner --condition base --adapter $A --splits val --batch-size 64 --max-new-tokens 200 --out results/E3b_grpo_base/val
+    $RUN -m conviction.evaluation.runner --condition base --adapter $A --splits test_id,test_template,test_structural,test_adversarial --natural --batch-size 64 --max-new-tokens 200 --out results/E3b_grpo_base
+    tar czf /workspace/adapter_grpo_base.tgz -C checkpoints/grpo_base final ;;
 esac
 tar czf /workspace/results_$1.tgz results
 echo PHASE_DONE_$1
