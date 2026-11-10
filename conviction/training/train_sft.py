@@ -88,6 +88,9 @@ def main(argv=None) -> int:
     )
     trainer = SFTTrainer(model=model, args=sargs, train_dataset=train_ds, eval_dataset=val_ds,
                          processing_class=tok, peft_config=peft_cfg, callbacks=[memory_callback()])
+    n_trainable = sum(p.numel() for p in trainer.model.parameters() if p.requires_grad)
+    n_total = sum(p.numel() for p in trainer.model.parameters())
+    print(f"trainable params: {n_trainable:,} / {n_total:,} ({100 * n_trainable / n_total:.3f}%)")
     # Sanity check: loss covers exactly the reference response + one end-of-turn token
     ex = trainer.train_dataset[0]
     target = tok.decode([i for i, l in zip(ex["input_ids"], ex["labels"]) if l != -100])
@@ -106,6 +109,8 @@ def main(argv=None) -> int:
         "train_episode_ids": [e["episode_id"] for e in train_eps],
         "metrics": result.metrics, "log_history": trainer.state.log_history,
         "global_steps": trainer.state.global_step,
+        "trainable_params": n_trainable, "total_params": n_total,
+        "peak_mem_gb": (torch.cuda.max_memory_allocated() / 1e9) if torch.cuda.is_available() else None,
         "trained_tokens": int(getattr(trainer.state, "num_input_tokens_seen", 0) or 0),
     })
     print(f"saved adapter to {final}")
