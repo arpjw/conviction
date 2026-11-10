@@ -76,6 +76,8 @@ def main(argv=None) -> int:
     )
     trainer = GRPOTrainer(model=model, reward_funcs=[make_trl_reward(weights)], args=gargs, train_dataset=ds,
                           processing_class=tok, peft_config=peft_cfg, callbacks=[memory_callback()])
+    n_trainable = sum(p.numel() for p in trainer.model.parameters() if p.requires_grad)
+    print(f"trainable params: {n_trainable:,}")
     t0 = time.time()
     result = trainer.train(resume_from_checkpoint=cfg.get("resume_from_checkpoint"))
     final = out / "final"
@@ -85,7 +87,8 @@ def main(argv=None) -> int:
         "config": cfg, "env": environment_info(), "train_seconds": time.time() - t0,
         "reward_weights": weights, "n_prompts": len(ds), "prompt_episode_ids": [e["episode_id"] for e in eps],
         "metrics": result.metrics, "log_history": trainer.state.log_history,
-        "global_steps": trainer.state.global_step,
+        "global_steps": trainer.state.global_step, "trainable_params": n_trainable,
+        "peak_mem_gb": (torch.cuda.max_memory_allocated() / 1e9) if torch.cuda.is_available() else None,
     })
     print(f"saved adapter to {final}")
     return 0
