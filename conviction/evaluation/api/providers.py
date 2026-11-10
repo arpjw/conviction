@@ -12,13 +12,14 @@ from dataclasses import dataclass, field
 
 from conviction.evaluation.api import convert
 
-# OpenAI-compatible endpoints. Verify against each provider's docs before a paid run.
+# OpenAI-compatible Chat Completions endpoints. Verify against each provider's docs before a paid run.
+# ("openai-chat" is kept for non-reasoning OpenAI models; OpenAI models default to the Responses API.)
 OPENAI_COMPATIBLE = {
-    "openai": (None, "OPENAI_API_KEY"),
+    "openai-chat": (None, "OPENAI_API_KEY"),
     "xai": ("https://api.x.ai/v1", "XAI_API_KEY"),
     "google": ("https://generativelanguage.googleapis.com/v1beta/openai/", "GEMINI_API_KEY"),
 }
-PROVIDERS = ["anthropic", *OPENAI_COMPATIBLE, "mock"]
+PROVIDERS = ["anthropic", "openai", *OPENAI_COMPATIBLE, "mock"]
 
 
 @dataclass
@@ -96,6 +97,46 @@ class OpenAICompatibleProvider:
         return Completion(ch.message.content or "", u.prompt_tokens, u.completion_tokens, ch.finish_reason or "", meta)
 
 
+class OpenAIResponsesProvider:
+    """OpenAI models through the Responses API (required by OpenAI for function tools with reasoning).
+    ``store`` is false so OpenAI does not retain the responses (matters for the private split)."""
+
+    def __init__(self, model: str, max_output_tokens: int, effort: str | None = None,
+                 temperature: float | None = None, base_url: str | None = None, extra: dict | None = None,
+                 max_retries: int = 6, http_client=None):
+        import openai
+        key = os.environ.get("OPENAI_API_KEY")
+        if not key:
+            raise SystemExit("OPENAI_API_KEY is not set; export it in your shell (it is never read from files)")
+        self.client = openai.AsyncOpenAI(api_key=key, base_url=base_url, max_retries=max_retries,
+                                         **({"http_client": http_client} if http_client else {}))
+        self.model, self.max_output_tokens, self.effort, self.temperature, self.extra = \
+            model, max_output_tokens, effort, temperature, extra or {}
+
+    def request_params(self, system: str, turns: list[dict]) -> dict:
+        p = {"model": self.model, "instructions": system, "input": convert.to_openai_responses(turns),
+             "tools": convert.RESPONSES_TOOLS, "tool_choice": "none", "max_output_tokens": self.max_output_tokens,
+             "store": False}
+        if self.effort:
+            p["reasoning"] = {"effort": self.effort}
+        if self.temperature is not None:
+            p["temperature"] = self.temperature
+        p.update(self.extra)
+        return p
+
+    async def complete(self, params: dict, episode: dict | None = None) -> Completion:
+        r = await self.client.responses.create(**params)
+        u = r.usage
+        meta = {"status": r.status, "id": r.id}
+        details = getattr(u, "output_tokens_details", None)
+        if details is not None:
+            meta["reasoning_tokens"] = details.reasoning_tokens
+        inc = getattr(r, "incomplete_details", None)
+        if inc is not None:
+            meta["incomplete_reason"] = getattr(inc, "reason", None)
+        return Completion(r.output_text or "", u.input_tokens, u.output_tokens, r.status or "", meta)
+
+
 class MockProvider:
     """Offline stand-in for tests and dry runs: answers with the episode's oracle reference response,
     so a correct pipeline scores perfectly. Uses Anthropic-format conversion to exercise it."""
@@ -119,6 +160,8 @@ def make_provider(name: str, model: str, max_output_tokens: int, effort: str | N
         if temperature is not None:
             raise SystemExit("--temperature is not supported for Anthropic models (current models reject it)")
         return AnthropicProvider(model, max_output_tokens, effort, extra)
+    if name == "openai":
+        return OpenAIResponsesProvider(model, max_output_tokens, effort, temperature, base_url, extra)
     if name in OPENAI_COMPATIBLE:
         return OpenAICompatibleProvider(name, model, max_output_tokens, effort, temperature, base_url, extra)
     if name == "mock":

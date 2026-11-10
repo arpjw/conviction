@@ -136,12 +136,52 @@ def test_openai_sdk_roundtrip(monkeypatch):
     assert (c.input_tokens, c.output_tokens, c.meta["reasoning_tokens"]) == (300, 40, 12)
 
 
+def test_openai_responses_format():
+    items = convert.to_openai_responses([T("user", "Q"), T("assistant", "A1"), T("tool", "rec"), T("user", "u")])
+    assert items[0] == {"role": "user", "content": "Q"} and items[1] == {"role": "assistant", "content": "A1"}
+    assert items[2]["type"] == "function_call" and items[3] == {"type": "function_call_output",
+                                                                "call_id": items[2]["call_id"], "output": "rec"}
+    assert items[4] == {"role": "user", "content": "u"}
+
+
+def test_openai_responses_sdk_roundtrip(monkeypatch):
+    httpx2 = pytest.importorskip("httpx2")
+    openai = pytest.importorskip("openai")
+    from conviction.evaluation.api.providers import OpenAIResponsesProvider
+    seen = {}
+    text = '{"reason": "r", "answer": "8", "decision": "revise"}'
+
+    def handler(request):
+        seen["url"], seen["body"] = str(request.url), json.loads(request.content)
+        return httpx2.Response(200, json={
+            "id": "resp_test", "object": "response", "created_at": 0, "model": "gpt-test", "status": "completed",
+            "output": [{"type": "reasoning", "id": "rs_1", "summary": []},
+                       {"type": "message", "id": "msg_1", "role": "assistant", "status": "completed",
+                        "content": [{"type": "output_text", "text": text, "annotations": []}]}],
+            "parallel_tool_calls": False, "tool_choice": "none", "tools": [],
+            "usage": {"input_tokens": 300, "input_tokens_details": {"cached_tokens": 0},
+                      "output_tokens": 90, "output_tokens_details": {"reasoning_tokens": 60}, "total_tokens": 390}})
+
+    monkeypatch.setenv("OPENAI_API_KEY", "test-key-not-real")
+    p = OpenAIResponsesProvider("gpt-test", 16000, effort="low", max_retries=0,
+                                http_client=openai.DefaultAsyncHttpx2Client(transport=httpx2.MockTransport(handler)))
+    params = p.request_params("SYSTEM", [T("user", "Q"), T("assistant", "A"), T("tool", "rec"), T("user", "u")])
+    c = asyncio.run(p.complete(params))
+    b = seen["body"]
+    assert seen["url"].endswith("/responses")
+    assert b["instructions"] == "SYSTEM" and b["tool_choice"] == "none" and b["store"] is False
+    assert b["reasoning"] == {"effort": "low"} and "temperature" not in b
+    assert [i.get("type", i.get("role")) for i in b["input"]] == ["user", "assistant", "function_call",
+                                                                  "function_call_output", "user"]
+    assert c.text == text and (c.input_tokens, c.output_tokens, c.meta["reasoning_tokens"]) == (300, 90, 60)
+
+
 def test_missing_key_is_a_clear_error(monkeypatch):
     pytest.importorskip("openai")
-    from conviction.evaluation.api.providers import OpenAICompatibleProvider
+    from conviction.evaluation.api.providers import OpenAIResponsesProvider
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     with pytest.raises(SystemExit, match="OPENAI_API_KEY"):
-        OpenAICompatibleProvider("openai", "m", 100)
+        OpenAIResponsesProvider("m", 100)
 
 
 # ---------------- sampling, end-to-end, cache, budget ----------------
