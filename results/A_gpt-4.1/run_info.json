@@ -1,0 +1,44 @@
+{
+ "track": "api",
+ "status": "complete",
+ "provider": "openai",
+ "model": "gpt-4.1",
+ "base_url": null,
+ "effort": null,
+ "temperature": null,
+ "extra_request_fields": null,
+ "max_output_tokens": 16000,
+ "condition": "base",
+ "splits": "test_structural",
+ "groups_per_split": 90,
+ "sample_seed": 20261110,
+ "natural": true,
+ "data_dir": "data/conviction_bench/v0.1",
+ "tool_channel": "native provider tool calls (convert.py)",
+ "prices_usd_per_mtok": {
+  "input": 2.0,
+  "output": 8.0
+ },
+ "usage_new": {
+  "input_tokens": 715628,
+  "output_tokens": 98576,
+  "calls": 1787,
+  "cached_responses": 0,
+  "usd": 2.2199
+ },
+ "stop_reasons_new": {
+  "completed": 1787
+ },
+ "timing": {
+  "test_structural": {
+   "episodes": 1257,
+   "seconds": 285.7285270690918
+  }
+ },
+ "total_seconds": 285.732666015625,
+ "python": "3.12.13",
+ "sdk": {
+  "anthropic": "2.8.0",
+  "openai": "3.49.0"
+ }
+}
