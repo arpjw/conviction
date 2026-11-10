@@ -1,0 +1,40 @@
+{
+ "model": "Qwen/Qwen3-1.7B",
+ "revision": null,
+ "adapter": "checkpoints/sft/final,checkpoints/sft_control/final",
+ "condition": "base",
+ "decoding": {
+  "do_sample": false,
+  "max_new_tokens": 200,
+  "enable_thinking": false
+ },
+ "batch_size": 64,
+ "dtype": "bfloat16",
+ "splits": "test_id,test_template,test_structural,test_adversarial",
+ "limit_groups": null,
+ "timing": {
+  "test_id": {
+   "episodes": 2393,
+   "seconds": 191.51264214515686
+  },
+  "test_template": {
+   "episodes": 2674,
+   "seconds": 203.98793983459473
+  },
+  "test_structural": {
+   "episodes": 2788,
+   "seconds": 397.44367694854736
+  },
+  "test_adversarial": {
+   "episodes": 22,
+   "seconds": 3.3266847133636475
+  }
+ },
+ "load_seconds": 11.892686367034912,
+ "total_seconds": 1125.3014702796936,
+ "torch": "2.9.1+cu128",
+ "transformers": "5.22.2",
+ "device": "cuda:0",
+ "python": "3.12.3",
+ "gpu": "NVIDIA RTX PRO 4500 Blackwell"
+}

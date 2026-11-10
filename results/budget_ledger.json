@@ -55,6 +55,17 @@
    "end": 1794280294.879141,
    "note": "E3 GRPO smoke+pilot+eval E3 GRPO smoke+pilot(200 steps)+eval OK; ~10 min lost to slow proxy upload",
    "kind": "measured_session"
+  },
+  {
+   "phase": "grpo",
+   "gpu": "RTX 3090 (secure) m2jhac735uc827",
+   "hours": 0.5647,
+   "rate": 0.5,
+   "cost": 0.2823,
+   "start": 1794281197.350019,
+   "end": 1794283230.244155,
+   "note": "E3 control: continued SFT on GRPO pool + eval E3 control OK",
+   "kind": "measured_session"
   }
  ],
  "open": null
