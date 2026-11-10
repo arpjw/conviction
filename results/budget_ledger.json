@@ -66,6 +66,17 @@
    "end": 1794283230.244155,
    "note": "E3 control: continued SFT on GRPO pool + eval E3 control OK",
    "kind": "measured_session"
+  },
+  {
+   "phase": "grpo",
+   "gpu": "RTX 4090 (secure) cc8rvg3q7uqo0r",
+   "hours": 1.8161,
+   "rate": 0.89,
+   "cost": 1.6163,
+   "start": 1794283414.539489,
+   "end": 1794289952.4350212,
+   "note": "E3b GRPO from base: smoke+gate+200 steps+eval E3b GRPO from base OK; ~12 min slow HF download",
+   "kind": "measured_session"
   }
  ],
  "open": null
