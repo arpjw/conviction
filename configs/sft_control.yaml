@@ -1,0 +1,30 @@
+# E3 control — continued SFT on the GRPO half of train groups.
+# Same starting point as E3 (SFT adapter merged + fresh LoRA r16) and the same prompt pool
+# that GRPO drew from (select(bucket="grpo", n=4000, seed=1)); reference responses instead of
+# reward. Isolates "RL" from "more training on fresh problems". Hyperparameters as configs/sft.yaml.
+model: Qwen/Qwen3-1.7B
+revision: null
+init_adapter: checkpoints/sft/final
+bucket: grpo
+data_dir: data/conviction_bench/v0.1
+output_dir: checkpoints/sft_control
+condition: base
+seed: 1
+n_train: 4000
+n_val: 400
+dtype: bfloat16
+lora: {r: 16, alpha: 32, dropout: 0.05, target_modules: all-linear}
+training:
+  epochs: 1
+  max_steps: -1
+  batch_size: 16
+  grad_accum: 2
+  lr: 2.0e-4
+  scheduler: cosine
+  warmup_steps: 5
+  max_length: 1024
+  gradient_checkpointing: true
+  bf16: true
+  logging_steps: 5
+  save_steps: 50
+  eval_steps: 25

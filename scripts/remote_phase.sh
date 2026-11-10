@@ -46,6 +46,15 @@ case "$1" in
     $RUN -m conviction.evaluation.runner --condition base --adapter $A --splits val --batch-size 64 --max-new-tokens 200 --out results/E3_grpo/val
     $RUN -m conviction.evaluation.runner --condition base --adapter $A --splits test_id,test_template,test_structural,test_adversarial --natural --batch-size 64 --max-new-tokens 200 --out results/E3_grpo
     tar czf /workspace/adapter_grpo.tgz -C checkpoints/grpo final ;;
+  sft_control)
+    test -f checkpoints/sft/final/adapter_model.safetensors
+    $RUN -m conviction.training.train_sft --config configs/sft_control.yaml
+    echo TRAIN_OK
+    mkdir -p results/E3c_sft_control && cp checkpoints/sft_control/train_info.json results/E3c_sft_control/
+    A=checkpoints/sft/final,checkpoints/sft_control/final
+    $RUN -m conviction.evaluation.runner --condition base --adapter $A --splits val --batch-size 64 --max-new-tokens 200 --out results/E3c_sft_control/val
+    $RUN -m conviction.evaluation.runner --condition base --adapter $A --splits test_id,test_template,test_structural,test_adversarial --natural --batch-size 64 --max-new-tokens 200 --out results/E3c_sft_control
+    tar czf /workspace/adapter_sft_control.tgz -C checkpoints/sft_control final ;;
 esac
 tar czf /workspace/results_$1.tgz results
 echo PHASE_DONE_$1

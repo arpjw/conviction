@@ -58,7 +58,8 @@ def main(argv=None) -> int:
     tok = AutoTokenizer.from_pretrained(cfg["model"], revision=cfg.get("revision"))
     tok.padding_side = "right"
 
-    train_eps = select(load_split(Path(cfg["data_dir"]), "train"), "sft", cfg["n_train"], cfg["seed"],
+    # bucket "grpo" + init_adapter = the continued-SFT control for E3 (same extra train groups as GRPO)
+    train_eps = select(load_split(Path(cfg["data_dir"]), "train"), cfg.get("bucket", "sft"), cfg["n_train"], cfg["seed"],
                        one_per_group=cfg.get("one_per_group", False))
     val_eps: list[dict] = []
     if cfg.get("n_val"):  # validation loss on a fixed random subset of the val split
@@ -71,6 +72,9 @@ def main(argv=None) -> int:
 
     dtype = getattr(torch, cfg.get("dtype", "bfloat16"))
     model = AutoModelForCausalLM.from_pretrained(cfg["model"], revision=cfg.get("revision"), dtype=dtype)
+    if cfg.get("init_adapter"):  # merge a previous adapter, then train a fresh LoRA (mirrors train_grpo)
+        from peft import PeftModel
+        model = PeftModel.from_pretrained(model, cfg["init_adapter"]).merge_and_unload()
     lc = cfg["lora"]
     peft_cfg = LoraConfig(r=lc["r"], lora_alpha=lc["alpha"], lora_dropout=lc["dropout"],
                           target_modules=lc["target_modules"], task_type="CAUSAL_LM")
