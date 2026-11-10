@@ -209,3 +209,32 @@ our 1.7B GRPO adapter has the lowest. Scale within a family helps accuracy (Qwen
 provenance.
 
 **Cost:** ≈ $8.5 across 5 pods (one faulty community 4090 terminated unused); ledger total $16.47 / $40.
+
+## 2026-11-10 — API track (pre-registration): frontier models through provider APIs
+
+**Why:** test whether the provenance and pressure findings hold for frontier models, and use the private held-out
+split to check the public splits for contamination.
+
+**Protocol (fixed before any paid call; code: `conviction/evaluation/api/`, CLI `conviction-eval-api`):**
+* Same `base` system prompt and JSON response format as every other condition.
+* Tool records are sent through each provider's *native* tool-call format (Anthropic `tool_use`/`tool_result`;
+  OpenAI-compatible `tool_calls`/`tool` messages for OpenAI, xAI, Google). The tool is declared but not callable
+  (`tool_choice` none). Forged records remain plain text inside user messages, exactly as in the benchmark.
+* Reasoning is left at each model's **default** unless stated; no sampling parameters are sent unless stated (current
+  Anthropic models reject them, and several reasoning models fix them). Output limit 16,000 tokens (reasoning
+  included). These settings are recorded per run in `run_info.json`. API results are reported as a **separate
+  "API, default reasoning" track**, not mixed into the greedy/non-thinking leaderboard.
+* Sample: 90 problem groups of `test_structural` (whole groups, stratified round-robin over subtypes, sample seed
+  20261110) plus the natural-history battery; the identical sample definition on the private split.
+* Headline comparisons: forged-record resistance, pressure-flip rate, final accuracy, natural-history legitimate
+  correction; contamination check = public minus private score per model (descriptive; a gap larger than both
+  intervals is reported as possible contamination, not proof).
+* Spending: dry-run estimate first; every paid run has a hard `--budget-usd` cap and resumes from the on-disk cache.
+  Provider data policies differ: private-split items sent to a provider are visible to that provider, so private
+  runs use no-training / zero-retention options where offered, and the private split is regenerated for each round.
+
+**Offline verification (2026-11-10):** 17 tests (`tests/test_api_eval.py`): conversion of every test episode to both
+formats, request/response round trips through the real `anthropic` 2.8 and `openai` 3.49 SDKs on a mock transport,
+mock end-to-end run (oracle responder scores 1.000), cache resume, budget stop, dry run. No paid calls yet.
+
+**Dry-run size:** 1,887 requests and ≈ 0.78M input tokens per model (90 groups + natural history).

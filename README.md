@@ -70,6 +70,22 @@ GPU (pod): `bash scripts/setup.sh`, then `scripts/smoke_test.sh`, `run_baseline.
 The exact pod phases used for every reported run are in `scripts/remote_phase.sh` (`baselines`, `sft`, `grpo`, `sft_control`,
 `grpo_base`, `grpo_base_s2`, `bench`); multi-model runs use `BENCH_MODELS="org/name:batch,..." bash scripts/remote_phase.sh bench`.
 
+### Evaluating frontier models through provider APIs
+
+```bash
+uv sync --extra api
+export ANTHROPIC_API_KEY=...   # or OPENAI_API_KEY / XAI_API_KEY / GEMINI_API_KEY — set in your shell, never in files
+# free estimate first (no calls, no key)
+uv run conviction-eval-api --provider anthropic --model claude-opus-5-5 --groups 90 --natural \
+    --price-in 4 --price-out 20 --dry-run --out results/A_claude-opus-5-5
+# paid run with a hard cap; cached and resumable
+uv run conviction-eval-api ... --budget-usd 20 --out results/A_claude-opus-5-5
+```
+
+Providers: `anthropic`, `openai`, `xai`, `google` (OpenAI-compatible), `mock` (offline). Tool records are sent through each
+provider's native tool-call format; see `conviction/evaluation/api/convert.py` and the API-track protocol in
+[research/EXPERIMENTS.md](research/EXPERIMENTS.md). Results are a separate "API, default reasoning" track.
+
 ## Layout
 
 ```

@@ -12,3 +12,5 @@ wandb/
 data/**/*.jsonl
 !data/conviction_bench/*/test_adversarial.jsonl
 .claude/
+# API-track response caches contain full requests (benchmark items, incl. private-split items): never commit
+results/**/cache.jsonl

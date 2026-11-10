@@ -13,9 +13,15 @@ dependencies = [
 [project.scripts]
 conviction-generate = "conviction.data.cli:main"
 conviction-eval = "conviction.evaluation.runner:main"
+conviction-eval-api = "conviction.evaluation.api.run:main"
 conviction-report = "conviction.analysis.report:main"
 
 [project.optional-dependencies]
+# Frontier-model evaluation through provider APIs (conviction-eval-api). Keys are read from the environment.
+api = [
+    "anthropic>=2.8",
+    "openai>=3.49",
+]
 # Installed on the GPU pod (and optionally locally for CPU smoke tests).
 train = [
     "torch==2.14.1",  # newest build available for CUDA 13.0 drivers (see [tool.uv.sources])
