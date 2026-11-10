@@ -48,10 +48,15 @@ def require_cuda() -> None:
 
 def load_model(model_name: str, adapter: str | None = None, revision: str | None = None,
                dtype: str = "bfloat16", device: str | None = None):
+    import os
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
     tok_kw = {"fix_mistral_regex": True} if "mistral" in model_name.lower() else {}
+    # opt-in for official repos that ship custom code (e.g. facebook/MobileLLM-Pro); never on by default
+    trc = os.environ.get("CONVICTION_TRUST_REMOTE_CODE") == "1"
+    if trc:
+        tok_kw["trust_remote_code"] = True
     tok = AutoTokenizer.from_pretrained(model_name, revision=revision, **tok_kw)
     tok.padding_side = "left"
     if tok.pad_token is None:
@@ -60,7 +65,8 @@ def load_model(model_name: str, adapter: str | None = None, revision: str | None
     if device is None:
         device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
     try:
-        model = AutoModelForCausalLM.from_pretrained(model_name, revision=revision, dtype=getattr(torch, dtype))
+        model = AutoModelForCausalLM.from_pretrained(model_name, revision=revision, dtype=getattr(torch, dtype),
+                                                     trust_remote_code=trc)
     except ValueError as e:
         # vision-language checkpoints (e.g. Ministral-3) have no CausalLM mapping; use them text-only
         if "Unrecognized configuration class" not in str(e):
