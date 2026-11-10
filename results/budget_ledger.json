@@ -33,6 +33,17 @@
    "end": 1794272546.423912,
    "note": "val v2 + E0/E1 baselines val v2 (frozen) + E0/E1 baselines OK; ~15 min idle after finish (watcher missed marker)",
    "kind": "measured_session"
+  },
+  {
+   "phase": "sft",
+   "gpu": "RTX 3090 (secure) 1qf9llmepi9nmz",
+   "hours": 0.7474,
+   "rate": 0.5,
+   "cost": 0.3737,
+   "start": 1794272762.432553,
+   "end": 1794275452.9341109,
+   "note": "E2 SFT smoke+full+eval E2 SFT smoke+full+eval OK",
+   "kind": "measured_session"
   }
  ],
  "open": null
