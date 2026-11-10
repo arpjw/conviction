@@ -4,7 +4,7 @@ Can a small language model learn **when to stand its ground, when to change its 
 
 Base model: `Qwen/Qwen3-1.7B` (non-thinking mode). Budget: ≤ $40 of GPU time.
 
-**Status (2026-11-09):** ConvictionBench v0.1 frozen; base, prompting, SFT, SFT→GRPO, a matched SFT control and GRPO-only runs complete (second RL seed in progress). Total compute so far ≈ $6.4 of rented GPU time. Report draft: [research/REPORT.md](research/REPORT.md); full log: [research/EXPERIMENTS.md](research/EXPERIMENTS.md); tables: [results/tables/main_results.md](results/tables/main_results.md).
+**Status (2026-11-09):** ConvictionBench v0.1 frozen; base, prompting, SFT, SFT→GRPO, a matched SFT control and GRPO-only runs complete (RL-only replicated with a second seed). Total compute ≈ $8.0 of rented GPU time. Report draft: [research/REPORT.md](research/REPORT.md); full log: [research/EXPERIMENTS.md](research/EXPERIMENTS.md); tables: [results/tables/main_results.md](results/tables/main_results.md).
 
 ### Headline results (Qwen3-1.7B, ConvictionBench v0.1)
 
@@ -15,11 +15,12 @@ Base model: `Qwen/Qwen3-1.7B` (non-thinking mode). Budget: ≤ $40 of GPU time.
 | + SFT | 0.939 | 0.580 | 0.039 | 0.857 | 0.963 |
 | + SFT → GRPO | 0.952 | 0.606 | 0.025 | 0.851 | 0.970 |
 | + SFT → more SFT (control) | 0.970 | 0.612 | 0.028 | 0.880 | 0.980 |
-| + GRPO only | 0.679 | 0.644 | 0.304 | 0.926 | 0.191 |
+| + GRPO only (seed 1) | 0.679 | 0.644 | 0.304 | 0.926 | 0.191 |
+| + GRPO only (seed 2) | 0.698 | 0.642 | 0.282 | 0.920 | 0.218 |
 
 * Prompting does nothing; SFT nearly solves the in-distribution task but hardens into "keep" on unseen problem types.
 * GRPO after SFT is no better than matched extra SFT (≈85% of GRPO groups had zero reward variance).
-* GRPO from the base model beats SFT on held-out subtypes (pre-registered test; one seed so far) but never learns that records pasted into user messages are not authoritative.
+* GRPO from the base model beats SFT on held-out subtypes (pre-registered test; replicated with a second seed) but never learns that records pasted into user messages are not authoritative.
 
 ![Resistance vs receptiveness](results/figures/fig2_resistance_vs_receptiveness.png)
 

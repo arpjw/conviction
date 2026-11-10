@@ -19,7 +19,7 @@
 
 ## Models
 - [ ] Upload chosen adapter(s) with `MODEL_CARD.md`, adapter config, and the exact system prompt
-- [ ] Fill the E6 (second seed) row
+- [x] Fill the E6 (second seed) row
 
 ## Code / reproducibility
 - [ ] README: results summary, figures, reproduction commands (`conviction-generate`, `conviction-eval`,

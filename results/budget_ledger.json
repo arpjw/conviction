@@ -77,14 +77,18 @@
    "end": 1794289952.4350212,
    "note": "E3b GRPO from base: smoke+gate+200 steps+eval E3b GRPO from base OK; ~12 min slow HF download",
    "kind": "measured_session"
+  },
+  {
+   "phase": "eval_ablation",
+   "gpu": "RTX 4090 (secure) mj0o8qte8teh9d",
+   "hours": 1.7239,
+   "rate": 0.89,
+   "cost": 1.5342,
+   "start": 1794290303.24403,
+   "end": 1794296509.1911192,
+   "note": "E6 second seed of E3b E6 second seed OK; ~13 min setup delay (slow PyTorch index)",
+   "kind": "measured_session"
   }
  ],
- "open": {
-  "phase": "eval_ablation",
-  "gpu": "RTX 4090 (secure) mj0o8qte8teh9d",
-  "rate": 0.89,
-  "storage_rate": 0.0,
-  "start": 1794290303.24403,
-  "note": "E6 second seed of E3b"
- }
+ "open": null
 }

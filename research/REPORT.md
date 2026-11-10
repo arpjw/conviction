@@ -13,7 +13,7 @@ must also accept valid corrections and new facts. We introduce **ConvictionBench
 oracle-labelled benchmark that crosses *social pressure framing* with *evidence content* in matched
 counterfactual groups, separates authenticated tool records from look-alike records pasted into
 user messages, and requires a three-way decision (keep / revise / insufficient). Using
-Qwen3-1.7B and a $40 compute budget, we compare prompting, supervised fine-tuning (SFT), SFT
+Qwen3-1.7B and under $8 of rented GPU time, we compare prompting, supervised fine-tuning (SFT), SFT
 followed by GRPO, a matched continued-SFT control, and GRPO from the base model. Prompting has no
 meaningful effect. SFT nearly solves in-distribution episodes (final accuracy 0.445 → 0.939;
 pressure flip rate 0.470 → 0.039) and resists forged records, but on held-out problem subtypes it
@@ -23,8 +23,9 @@ that a matched continued-SFT control equals or exceeds, because SFT leaves almos
 variance (≈85% of GRPO groups carry no gradient). GRPO from the base model, in contrast, passes a
 pre-registered test against SFT on held-out subtypes (final accuracy +0.064 [+0.020, +0.109];
 natural-history correction acceptance 0.73 vs 0.07) but never learns the provenance rule
-(forged-record resistance stays at base level) and abstains poorly. SFT teaches *rules*; RL teaches
-*verification*; neither alone yields evidence-sensitive belief revision. **[TODO: E6 replicate.]**
+(forged-record resistance stays at base level) and abstains poorly. The result replicates
+with a second seed (final accuracy +0.062 [+0.020, +0.106]). SFT teaches *rules*; RL teaches
+*verification*; neither alone yields evidence-sensitive belief revision.
 
 ## 1. Introduction
 
@@ -139,7 +140,8 @@ GRPO draw prompts from disjoint halves of the train groups.
   the *same* 4,000-prompt pool E3 sampled from (E3 consumed 3,200 of them).
 * **E3b GRPO only.** As E3 but starting from the base model (pre-registered with a go/no-go gate:
   ≤ 70% zero-variance groups and ≤ 20% truncated completions in a 3-step smoke run).
-* **E6.** E3b with a second seed (prompt subset/order, LoRA initialisation, sampling). **[TODO]**
+* **E6.** E3b with a second seed (prompt subset/order, LoRA initialisation, sampling), pre-registered
+  with the same test.
 
 ## 6. Experimental setup
 
@@ -155,7 +157,7 @@ comparisons use paired cluster bootstrap on identical episode sets. **Capability
 views restrict to groups whose unchallenged question the model answers correctly.
 
 **Compute.** Rented RunPod GPUs (RTX 3090 / 4090 / 4000 Ada). Every pod session is in
-`results/budget_ledger.json`; total spend at drafting time is $6.42 + E6.
+`results/budget_ledger.json`; total spend for all experiments reported here is $7.96.
 
 ## 7. Results
 
@@ -223,7 +225,15 @@ distribution, however, E3b is far below SFT (final 0.679 vs 0.939) and its fabri
 resistance stays at base level (0.191 vs E0 0.248): 200 RL steps did not discover that records
 inside user messages are not authoritative.
 
-### 7.6 Replication (E6) **[TODO]**
+### 7.6 Replication (E6)
+
+The second seed reproduces the E3b result almost exactly. Against SFT on test_structural: final
+accuracy +0.062 [+0.020, +0.106]; pressure flip −0.016 [−0.068, +0.038]; natural-history legitimate
+correction 0.417 (n = 12) vs 0.074 (n = 54), unpaired cluster-bootstrap difference +0.343 [+0.041,
++0.650] (seed 1: +0.659 [+0.401, +0.889]). All three pre-registered criteria hold: **H5′ replicates.**
+Seed-to-seed differences on test_structural are within ±0.06 for every metric (final accuracy −0.002
+[−0.018, +0.015]), and the trade-offs replicate too: fabricated-evidence resistance 0.218 (test_id),
+insufficient-evidence accuracy 0.529, in-distribution final accuracy 0.698.
 
 ### 7.7 Hypothesis summary
 
@@ -233,13 +243,13 @@ inside user messages are not authoritative.
 | H2 receptiveness | ✗ | ✓ in-dist.; ✗ held-out subtypes | as SFT | ✓ |
 | H3 generalisation | – | templates ✓; subtypes partial | as SFT | subtypes ✓ (best) |
 | H4 calibration | ✗ | ✓ | ✓ | partial |
-| H5 beyond SFT | – | – | ✗ | ✓ on held-out subtypes (pre-registered; replicate pending) |
+| H5 beyond SFT | – | – | ✗ | ✓ on held-out subtypes (pre-registered; replicated, 2 seeds) |
 
 ## 8. Ablations
 
 * **Matched continued SFT (E3c)** — §7.4.
 * **Response order** (decision-first vs reason-first, validation only) — §6.
-* **Second RL seed (E6)** — **[TODO]**.
+* **Second RL seed (E6)** — §7.6.
 * Not run (planned in the protocol): outcome-only reward (E4), no counterfactual siblings (E5).
 
 ## 9. Failure analysis **[TODO — expand with examples drawn by a fixed random procedure]**
@@ -272,7 +282,7 @@ on a strong SFT model adds nothing beyond more supervised data, because there is
 left to learn from. Reinforcement learning from the base model learns revision that generalises to
 unseen problem types but not the rules. The natural next step is a combined recipe that preserves
 RL signal — for example, light SFT on provenance and abstention followed by RL on prompts where the
-model is uncertain. **[TODO: update after E6 and multi-model baselines.]**
+model is uncertain. **[TODO: update after multi-model baselines.]**
 
 ## Reproduction
 

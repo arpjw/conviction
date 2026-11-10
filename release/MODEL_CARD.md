@@ -45,7 +45,8 @@ model = PeftModel.from_pretrained(model, "<hf-user>/conviction-1.7b-sft").merge_
 | test_id fabricated-evidence resistance | 0.248 | 0.963 | 0.191 |
 | test_id insufficient-evidence accuracy | 0.355 | 0.963 | 0.566 |
 
-Second-seed replicate of the RL recipe (E6): <to be filled from results/E6_grpo_base_s2>.
+Second-seed replicate of the RL recipe (E6): test_structural final accuracy 0.642 (seed 1: 0.644), test_id
+fabricated-evidence resistance 0.218, test_structural legitimate correction 0.920 — the trade-off profile replicates.
 
 ## Training
 

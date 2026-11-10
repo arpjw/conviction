@@ -102,7 +102,8 @@ first answer.
 | Qwen3-1.7B (base) | 0.445 | 0.424 | 0.470 | 0.937 |
 | + guidance prompt | 0.449 | 0.433 | 0.453 | 0.937 |
 | + SFT (LoRA) | 0.939 | 0.580 | 0.039 | 0.857 |
-| + GRPO only (LoRA) | 0.679 | 0.644 | 0.304 | 0.926 |
+| + GRPO only (LoRA, seed 1) | 0.679 | 0.644 | 0.304 | 0.926 |
+| + GRPO only (LoRA, seed 2) | 0.698 | 0.642 | 0.282 | 0.920 |
 
 Full tables with CIs: `results/tables/main_results.md` in the repository. Multi-model
 baselines: to be added.
