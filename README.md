@@ -4,9 +4,31 @@ Can a small language model learn **when to stand its ground, when to change its 
 
 Base model: `Qwen/Qwen3-1.7B` (non-thinking mode). Budget: ≤ $40 of GPU time.
 
-**Status (2026-11-09):** ConvictionBench v0.1 frozen; base, prompting, SFT, SFT→GRPO, a matched SFT control and GRPO-only runs complete (RL-only replicated with a second seed). Total compute ≈ $8.0 of rented GPU time. Report draft: [research/REPORT.md](research/REPORT.md); full log: [research/EXPERIMENTS.md](research/EXPERIMENTS.md); tables: [results/tables/main_results.md](results/tables/main_results.md).
+**Project page:** https://aryasomu.com/conviction/ · **Dataset:** [arpjw/ConvictionBench](https://huggingface.co/datasets/arpjw/ConvictionBench) · **Models:** [arpjw/conviction-1.7b-sft](https://huggingface.co/arpjw/conviction-1.7b-sft), [arpjw/conviction-1.7b-rl](https://huggingface.co/arpjw/conviction-1.7b-rl)
 
-### Headline results (Qwen3-1.7B, ConvictionBench v0.1)
+**Status (2026-11-10):** ConvictionBench v0.1 frozen and released; base, prompting, SFT, SFT→GRPO, a matched SFT control and GRPO-only runs complete (GRPO-only replicated with a second seed); 10 off-the-shelf models benchmarked. Total compute ≈ $16.50 of rented GPU time ([ledger](results/budget_ledger.json)). Working report draft: [research/REPORT.md](research/REPORT.md); full experiment log: [research/EXPERIMENTS.md](research/EXPERIMENTS.md); tables: [results/tables/main_results.md](results/tables/main_results.md).
+
+### ConvictionBench leaderboard (v0.1, non-thinking, greedy)
+
+| Model | Held-out problems: final acc. | Held-out problems: pressure flip ↓ | Forged-record resistance (in-dist.) |
+|---|---|---|---|
+| **Conviction-RL (ours, 1.7B)** | 0.644 | 0.348 | 0.191 |
+| **Conviction-SFT (ours, 1.7B)** | 0.580 | 0.389 | 0.963 |
+| Qwen3-1.7B (our base) | 0.424 | 0.536 | 0.248 |
+| Qwen3.5-9B | 0.688 | 0.399 | 0.060 |
+| Granite-4.2-8B | 0.608 | 0.374 | 0.104 |
+| Qwen3.5-4B | 0.606 | 0.428 | 0.035 |
+| Ministral-3-8B | 0.526 | 0.659 | 0.022 |
+| Qwen3-8B | 0.474 | 0.648 | 0.087 |
+| Nemotron-3-Nano-4B | 0.391 | 0.695 | 0.067 |
+| Phi-4-mini | 0.347 | 0.767 | 0.065 |
+| MobileLLM-Pro | 0.321 | 0.670 | 0.248 |
+| Llama-3.2-3B | 0.317 | 0.898 | 0.164 |
+| Olmo-3-7B | 0.304 | 0.812 | 0.035 |
+
+No off-the-shelf model resists forged records pasted into user messages (all ≤ 0.25); our GRPO adapter has the lowest pressure-flip rate of the 13 models. Per-model protocol notes (GPU, transformers version, kernels) are in each `results/*/run_info.json` and in [research/EXPERIMENTS.md](research/EXPERIMENTS.md) § B.
+
+### Training results (Qwen3-1.7B)
 
 | | In-dist. final acc. | Held-out subtypes final acc. | In-dist. pressure flip ↓ | Held-out subtypes legit. correction | In-dist. forged-record resistance |
 |---|---|---|---|---|---|
@@ -45,6 +67,8 @@ uv run --extra analysis conviction-report   # tables + figures from results/
 ```
 
 GPU (pod): `bash scripts/setup.sh`, then `scripts/smoke_test.sh`, `run_baseline.sh`, `run_sft.sh`, `run_grpo.sh`.
+The exact pod phases used for every reported run are in `scripts/remote_phase.sh` (`baselines`, `sft`, `grpo`, `sft_control`,
+`grpo_base`, `grpo_base_s2`, `bench`); multi-model runs use `BENCH_MODELS="org/name:batch,..." bash scripts/remote_phase.sh bench`.
 
 ## Layout
 
@@ -59,4 +83,26 @@ research/validation/    human-validation sample and guide
 configs/ scripts/ tests/ research/
 ```
 
-License: Apache-2.0 (code). Base model weights: Qwen3, Apache-2.0.
+## Data hygiene
+
+Released dataset files carry a canary string (`release/CANARY.txt`), and the Hugging Face dataset is gated behind a
+no-training agreement. Please do not train on ConvictionBench, and filter documents containing the canary from training corpora.
+
+Because the generator is public, the public splits can be regenerated exactly; they are for reproducibility, not secrecy. A
+**private held-out split** (same generator and settings, secret seed, disjoint from every public problem) is kept offline to
+score models and detect contamination. Its SHA-256 hashes are committed in
+[release/PRIVATE_SPLIT_COMMITMENT.txt](release/PRIVATE_SPLIT_COMMITMENT.txt). To have a model scored on it, open an issue.
+
+## License and citation
+
+Code: Apache-2.0. Data: CC-BY-4.0. Adapters: Apache-2.0 (base model Qwen3-1.7B, Apache-2.0).
+
+```bibtex
+@misc{somu2026convictionbench,
+  title  = {ConvictionBench: Evidence-Sensitive Belief Revision in Language Models},
+  author = {Somu, Arya},
+  year   = {2026},
+  note   = {v0.1},
+  url    = {https://aryasomu.com/conviction/}
+}
+```

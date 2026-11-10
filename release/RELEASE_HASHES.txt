@@ -1,0 +1,9 @@
+# SHA-256 of the released files in data/ (canary field added, problem serialised as a JSON string).
+# The frozen generator output is hashed in FROZEN.txt; regenerate with conviction-generate (seed 20261109).
+
+train            30083e15ef53cf667df4179f2188cfaf33fb0d835ab4bae317a11334d429788c
+val              f8dad4d985df49c10c6b30aaf3eb0f6d6c2c4a1fc765594012e00ec2c2d82e97
+test_id          1a0fe4dea93d004731b851c3dc0708bdf9408fd817647b114990b89771baf267
+test_template    8767fd38a0c9042d8388a5ccea49e92f08a03493f3c0257c193ab528e24ef013
+test_structural  33bae97c91b6d250123e7425f0842d04c1dc90ca8a835420bb3f8de43e02f83a
+test_adversarial c2e4abf50a4ad3e536c711522d8ac63f0f817f6e70a48f56e8b9d385db07ee08

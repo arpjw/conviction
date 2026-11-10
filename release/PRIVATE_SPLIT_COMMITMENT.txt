@@ -1,0 +1,11 @@
+# ConvictionBench v0.1: private held-out split (hash commitment, 2026-11-10)
+#
+# Generated with the released generator and configs/base.yaml, but with a secret seed. The files and the seed are kept
+# offline and never published; they are used only to score models and detect contamination of the public splits
+# (a model that has trained on public items should score markedly higher on the public splits than here).
+# Publishing these SHA-256 hashes now commits to the exact private files without revealing them.
+# Groups whose problem also occurs in any public split were removed, so the private split is fully disjoint.
+
+private_test_id         02a0eeeb94be8da467e4495401d9b8600b32de010d063699979a11ad4623db20  episodes=1800 groups=140
+private_test_template   e1cddeed4f89315c014004066bba6c2fa8301cfc6dfb7eab4e0f6c29891cb088  episodes=2568 groups=198
+private_test_structural 10d314852fa2486c7992cc4695c837419adeb867df54a64a336e4a6fc6ac39f9  episodes=2798 groups=200
