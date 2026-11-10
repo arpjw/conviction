@@ -1,5 +1,5 @@
 ---
-license: cc-by-4.0            # proposed; code is Apache-2.0 — confirm before release
+license: cc-by-4.0            # data; code is Apache-2.0
 language: [en]
 pretty_name: ConvictionBench
 task_categories: [question-answering, text-generation]

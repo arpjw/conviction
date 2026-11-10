@@ -1,10 +1,10 @@
 # Release checklist (benchmark + models + report, released together)
 
 ## Decisions needed (owner: Arya)
-- [ ] Hugging Face namespace for dataset and models
-- [ ] Data licence (proposed CC-BY-4.0; code stays Apache-2.0)
-- [ ] Which variant ships as `conviction-1.7b` (SFT, RL-only, or both as `-sft` / `-rl`)
-- [ ] Venue: arXiv preprint only, or a workshop submission (affects report length/format)
+- [x] Hugging Face namespace: **arpjw** (decided 2026-11-09) — `arpjw/ConvictionBench`, `arpjw/conviction-1.7b-sft`, `arpjw/conviction-1.7b-rl`
+- [x] Data licence: **CC-BY-4.0**; code Apache-2.0 (decided 2026-11-09)
+- [x] Models: release **both** `conviction-1.7b-sft` (E2) and `conviction-1.7b-rl` (E3b, seed 1; E6 as replicate) (decided 2026-11-09)
+- [x] Venue: **arXiv preprint** (decided 2026-11-09); release benchmark + models + report together after multi-model baselines
 - [ ] Author list and affiliation for the citation
 
 ## Benchmark

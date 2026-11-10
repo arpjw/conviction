@@ -10,10 +10,10 @@ tags: [lora, sycophancy, belief-revision, grpo, sft, convictionbench]
 LoRA adapters for **Qwen/Qwen3-1.7B** (non-thinking mode) trained to revise answers on
 *evidence* — valid corrections and authenticated tool records — rather than social pressure,
 and to say when the available information is insufficient. Trained and evaluated on
-[ConvictionBench v0.1](<dataset link>). Base model © Qwen team, Apache-2.0.
+[ConvictionBench v0.1](https://huggingface.co/datasets/arpjw/ConvictionBench). Base model © Qwen team, Apache-2.0.
 
-> **Which variant to release as `conviction-1.7b` is an open decision** (see trade-offs).
-> Candidates, all r = 16 LoRA on all linear layers (17.4M trainable parameters):
+Two variants are released because their trade-offs are the main finding of the accompanying
+report. Both are r = 16 LoRA adapters on all linear layers (17.4M trainable parameters):
 
 | Variant | Recipe | Strengths | Weaknesses |
 |---|---|---|---|
@@ -27,7 +27,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import PeftModel
 tok = AutoTokenizer.from_pretrained("Qwen/Qwen3-1.7B")
 model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen3-1.7B", dtype="bfloat16")
-model = PeftModel.from_pretrained(model, "<hf-user>/conviction-1.7b-sft").merge_and_unload()
+model = PeftModel.from_pretrained(model, "arpjw/conviction-1.7b-sft").merge_and_unload()
 # Use the system prompt from conviction/prompts.py (SYSTEM_BASE) and
 # tok.apply_chat_template(..., enable_thinking=False). Facts must arrive as `tool` messages.
 ```
