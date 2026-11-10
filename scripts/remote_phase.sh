@@ -67,6 +67,15 @@ case "$1" in
     $RUN -m conviction.evaluation.runner --condition base --adapter $A --splits val --batch-size 64 --max-new-tokens 200 --out results/E3b_grpo_base/val
     $RUN -m conviction.evaluation.runner --condition base --adapter $A --splits test_id,test_template,test_structural,test_adversarial --natural --batch-size 64 --max-new-tokens 200 --out results/E3b_grpo_base
     tar czf /workspace/adapter_grpo_base.tgz -C checkpoints/grpo_base final ;;
+  grpo_base_s2)
+    # E6: second seed of E3b. seed=2 changes prompt subset/order (same GRPO pool), LoRA init and sampling.
+    $RUN -m conviction.training.train_grpo --config configs/grpo_from_base.yaml --override seed=2 output_dir=checkpoints/grpo_base_s2
+    echo TRAIN_OK
+    mkdir -p results/E6_grpo_base_s2 && cp checkpoints/grpo_base_s2/train_info.json results/E6_grpo_base_s2/
+    A=checkpoints/grpo_base_s2/final
+    $RUN -m conviction.evaluation.runner --condition base --adapter $A --splits val --batch-size 64 --max-new-tokens 200 --out results/E6_grpo_base_s2/val
+    $RUN -m conviction.evaluation.runner --condition base --adapter $A --splits test_id,test_template,test_structural,test_adversarial --natural --batch-size 64 --max-new-tokens 200 --out results/E6_grpo_base_s2
+    tar czf /workspace/adapter_grpo_base_s2.tgz -C checkpoints/grpo_base_s2 final ;;
 esac
 tar czf /workspace/results_$1.tgz results
 echo PHASE_DONE_$1
