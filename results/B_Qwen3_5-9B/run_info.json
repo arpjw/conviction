@@ -1,0 +1,41 @@
+{
+ "model": "Qwen/Qwen3.5-9B",
+ "revision": null,
+ "adapter": null,
+ "condition": "base",
+ "decoding": {
+  "do_sample": false,
+  "max_new_tokens": 200,
+  "enable_thinking": false
+ },
+ "batch_size": 64,
+ "dtype": "bfloat16",
+ "splits": "test_id,test_template,test_structural,test_adversarial",
+ "limit_groups": null,
+ "timing": {
+  "test_id": {
+   "episodes": 2393,
+   "seconds": 289.0012128353119
+  },
+  "test_template": {
+   "episodes": 2674,
+   "seconds": 332.564749956131
+  },
+  "test_structural": {
+   "episodes": 2788,
+   "seconds": 359.2549338340759
+  },
+  "test_adversarial": {
+   "episodes": 22,
+   "seconds": 3.073564291000366
+  }
+ },
+ "oom_splits": [],
+ "load_seconds": 8.55936074256897,
+ "total_seconds": 1432.1204998493195,
+ "torch": "2.9.1+cu128",
+ "transformers": "5.22.2",
+ "device": "cuda:0",
+ "python": "3.12.3",
+ "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition"
+}

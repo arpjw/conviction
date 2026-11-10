@@ -1,0 +1,41 @@
+{
+ "model": "allenai/Olmo-3-7B-Instruct",
+ "revision": null,
+ "adapter": null,
+ "condition": "base",
+ "decoding": {
+  "do_sample": false,
+  "max_new_tokens": 200,
+  "enable_thinking": false
+ },
+ "batch_size": 64,
+ "dtype": "bfloat16",
+ "splits": "test_id,test_template,test_structural,test_adversarial",
+ "limit_groups": null,
+ "timing": {
+  "test_id": {
+   "episodes": 2393,
+   "seconds": 190.21322107315063
+  },
+  "test_template": {
+   "episodes": 2674,
+   "seconds": 208.7850785255432
+  },
+  "test_structural": {
+   "episodes": 2788,
+   "seconds": 247.47347712516785
+  },
+  "test_adversarial": {
+   "episodes": 22,
+   "seconds": 1.8476629257202148
+  }
+ },
+ "oom_splits": [],
+ "load_seconds": 4.21507453918457,
+ "total_seconds": 770.6132662296295,
+ "torch": "2.9.1+cu128",
+ "transformers": "5.22.2",
+ "device": "cuda:0",
+ "python": "3.12.3",
+ "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition"
+}

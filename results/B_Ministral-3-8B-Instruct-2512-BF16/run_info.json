@@ -1,0 +1,41 @@
+{
+ "model": "mistralai/Ministral-3-8B-Instruct-2512-BF16",
+ "revision": null,
+ "adapter": null,
+ "condition": "base",
+ "decoding": {
+  "do_sample": false,
+  "max_new_tokens": 200,
+  "enable_thinking": false
+ },
+ "batch_size": 64,
+ "dtype": "bfloat16",
+ "splits": "test_id,test_template,test_structural,test_adversarial",
+ "limit_groups": null,
+ "timing": {
+  "test_id": {
+   "episodes": 2393,
+   "seconds": 347.3514988422394
+  },
+  "test_template": {
+   "episodes": 2674,
+   "seconds": 361.2134065628052
+  },
+  "test_structural": {
+   "episodes": 2788,
+   "seconds": 409.2760331630707
+  },
+  "test_adversarial": {
+   "episodes": 22,
+   "seconds": 3.149038553237915
+  }
+ },
+ "oom_splits": [],
+ "load_seconds": 5.734300374984741,
+ "total_seconds": 1706.0758714675903,
+ "torch": "2.9.1+cu128",
+ "transformers": "5.22.2",
+ "device": "cuda:0",
+ "python": "3.12.3",
+ "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition"
+}

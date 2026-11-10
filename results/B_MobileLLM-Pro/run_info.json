@@ -1,0 +1,41 @@
+{
+ "model": "facebook/MobileLLM-Pro",
+ "revision": null,
+ "adapter": null,
+ "condition": "base",
+ "decoding": {
+  "do_sample": false,
+  "max_new_tokens": 200,
+  "enable_thinking": false
+ },
+ "batch_size": 64,
+ "dtype": "bfloat16",
+ "splits": "test_id,test_template,test_structural,test_adversarial",
+ "limit_groups": null,
+ "timing": {
+  "test_id": {
+   "episodes": 2393,
+   "seconds": 175.04820322990417
+  },
+  "test_template": {
+   "episodes": 2674,
+   "seconds": 190.09612894058228
+  },
+  "test_structural": {
+   "episodes": 2788,
+   "seconds": 102.4073600769043
+  },
+  "test_adversarial": {
+   "episodes": 22,
+   "seconds": 0.5766696929931641
+  }
+ },
+ "oom_splits": [],
+ "load_seconds": 3.2126801013946533,
+ "total_seconds": 620.0557126998901,
+ "torch": "2.9.1+cu128",
+ "transformers": "4.56.2",
+ "device": "cuda:0",
+ "python": "3.12.3",
+ "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition"
+}

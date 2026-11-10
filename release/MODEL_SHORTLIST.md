@@ -1,4 +1,4 @@
-# Multi-model baselines: shortlist (revised 2026-11-10)
+# Multi-model baselines: shortlist (revised and RUN 2026-11-10; results in research/EXPERIMENTS.md, section B)
 
 ConvictionBench's provenance test only works if a model's chat template gives tool records a
 channel that is **distinguishable from user text**. Every candidate below was checked locally

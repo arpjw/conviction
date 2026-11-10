@@ -167,3 +167,45 @@ Status: **frozen 2026-11-09** (see `data/conviction_bench/v0.1/FROZEN.txt` and t
   *Pre-registered replication test (E6 − E2):* test_structural final accuracy **+0.062 [+0.020, +0.106]** ✓; pressure flip −0.016 [−0.068, +0.038] (not worse) ✓; test_structural_natural legitimate correction 0.417 (n = 12) vs 0.074 (n = 54), unpaired cluster-bootstrap difference **+0.343 [+0.041, +0.650]**, p = 0.025 ✓ (same test for seed 1: +0.659 [+0.401, +0.889]). → **H5′ replicated across two seeds.**
   *Seed agreement (E6 − E3b, paired):* test_structural final −0.002 [−0.018, +0.015]; every test_structural metric within ±0.06, most n.s. (insufficient −0.060, capitulation +0.037, false abstention −0.011 significant). The trade-off profile replicates exactly: vs SFT, seed 2 also has much worse fabricated-evidence resistance (test_id 0.218 vs 0.963), insufficient-evidence accuracy (0.529 vs 0.963) and in-distribution final accuracy (0.698 vs 0.939). In-distribution, seed 2 is slightly better than seed 1 on legitimate correction (+0.057) and authenticated updates (+0.068).
   Comparisons: `results/comparisons/E6_vs_E2.json`, `E6_vs_E3b.json`.
+
+## 2026-11-10 — B: multi-model baselines (10 off-the-shelf models)
+
+**Protocol (unchanged from E0):** `base` system prompt, non-thinking (`enable_thinking=False`; Granite-4.2,
+Nemotron and Qwen3.5 render an empty think block), greedy, ≤ 200 new tokens, all four test splits + natural
+history, 2000-sample cluster bootstrap. Each model ran a 2-group smoke eval first. Models were selected per
+`release/MODEL_SHORTLIST.md` (tool-channel template check); Gemma 4 / SmolLM3 / OLMo-2 excluded there.
+
+**Deviations, recorded in each `run_info.json`:**
+* Mixed GPUs (RTX PRO 4500 / RTX PRO 6000; E0–E6 used 3090/4090) and per-model batch sizes. Greedy outputs can
+  differ slightly across GPU/batch due to floating-point non-determinism; not expected to move metrics materially.
+* `facebook/MobileLLM-Pro` ships custom code written for transformers 4.53; it fails under 5.22 (RoPE config),
+  so it ran in an isolated venv with **transformers 4.56.2** (`CONVICTION_TRUST_REMOTE_CODE=1`). Its strict
+  format rate is low (0.49 on test_structural), so its scores partly reflect format failures.
+* Qwen3.5 / Nemotron ran with flash-linear-attention / causal-conv1d / mamba-ssm kernels (same maths, faster).
+* `Ministral-3` loaded via `AutoModelForImageTextToText` (text-only); tokenizer with `fix_mistral_regex=True`.
+
+**Results (test_structural final accuracy [95% CI] / pressure flip rate / test_id forged-record resistance):**
+
+| Model | Final acc. | Flip ↓ | Forged-record res. |
+|---|---|---|---|
+| Qwen3.5-9B | 0.688 [0.670, 0.705] | 0.399 | 0.060 |
+| *Ours: GRPO-only 1.7B (E3b)* | 0.644 [0.618, 0.668] | 0.348 | 0.191 |
+| Granite-4.2-8B | 0.608 [0.586, 0.629] | 0.374 | 0.104 |
+| Qwen3.5-4B | 0.606 [0.580, 0.631] | 0.428 | 0.035 |
+| *Ours: SFT 1.7B (E2)* | 0.580 [0.530, 0.626] | 0.389 | 0.963 |
+| Ministral-3-8B | 0.526 [0.502, 0.550] | 0.659 | 0.022 |
+| Qwen3-8B | 0.474 [0.455, 0.495] | 0.648 | 0.087 |
+| *Qwen3-1.7B base (E0)* | 0.424 [0.404, 0.444] | 0.536 | 0.248 |
+| Nemotron-3-Nano-4B | 0.391 [0.368, 0.411] | 0.695 | 0.067 |
+| Phi-4-mini | 0.347 [0.330, 0.365] | 0.767 | 0.065 |
+| MobileLLM-Pro (1B) | 0.321 [0.301, 0.341] | 0.670 | 0.248 |
+| Llama-3.2-3B | 0.317 [0.300, 0.335] | 0.898 | 0.164 |
+| Olmo-3-7B | 0.304 [0.286, 0.323] | 0.812 | 0.035 |
+
+**Observations (point estimates; formal comparisons to follow in the report):** no off-the-shelf model resists
+forged in-message records (all ≤ 0.25; only our SFT adapter reaches 0.96), i.e. the provenance rule is not
+something current small instruct models do by default. Pressure flip rates are high across the board (0.37–0.90);
+our 1.7B GRPO adapter has the lowest. Scale within a family helps accuracy (Qwen3.5 4B → 9B) but not
+provenance.
+
+**Cost:** ≈ $8.5 across 5 pods (one faulty community 4090 terminated unused); ledger total $16.47 / $40.

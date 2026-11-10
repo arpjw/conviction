@@ -1,0 +1,41 @@
+{
+ "model": "meta-llama/Llama-3.2-3B-Instruct",
+ "revision": null,
+ "adapter": null,
+ "condition": "base",
+ "decoding": {
+  "do_sample": false,
+  "max_new_tokens": 200,
+  "enable_thinking": false
+ },
+ "batch_size": 64,
+ "dtype": "bfloat16",
+ "splits": "test_id,test_template,test_structural,test_adversarial",
+ "limit_groups": null,
+ "timing": {
+  "test_id": {
+   "episodes": 2393,
+   "seconds": 137.59042191505432
+  },
+  "test_template": {
+   "episodes": 2674,
+   "seconds": 124.86827039718628
+  },
+  "test_structural": {
+   "episodes": 2788,
+   "seconds": 283.0673110485077
+  },
+  "test_adversarial": {
+   "episodes": 22,
+   "seconds": 1.3258144855499268
+  }
+ },
+ "oom_splits": [],
+ "load_seconds": 3.284698247909546,
+ "total_seconds": 807.5463671684265,
+ "torch": "2.9.1+cu128",
+ "transformers": "5.22.2",
+ "device": "cuda:0",
+ "python": "3.12.3",
+ "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition"
+}

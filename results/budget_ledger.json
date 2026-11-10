@@ -88,6 +88,45 @@
    "end": 1794296509.1911192,
    "note": "E6 second seed of E3b E6 second seed OK; ~13 min setup delay (slow PyTorch index)",
    "kind": "measured_session"
+  },
+  {
+   "phase": "eval_ablation",
+   "cost": 2.6698,
+   "note": "Bench pod B RTX PRO 6000 secure c4quj1kxgvvfvp 1.072h @ $2.49: Qwen3.5-4B, Qwen3.5-9B, Nemotron-3-Nano-4B",
+   "time": 1794340381.982332,
+   "kind": "manual"
+  },
+  {
+   "phase": "eval_ablation",
+   "gpu": "RTX PRO 4500 (secure) ee8kapr3fra824",
+   "hours": 1.4308,
+   "rate": 0.72,
+   "cost": 1.0302,
+   "start": 1794335762.249829,
+   "end": 1794340913.060502,
+   "note": "Bench pod A: Qwen3-8B, Phi-4-mini",
+   "kind": "measured_session"
+  },
+  {
+   "phase": "eval_ablation",
+   "cost": 3.9285,
+   "note": "Bench pod C RTX PRO 6000 secure yqrdv7jmh123dq: Olmo-3-7B, Ministral-3-8B, Granite-4.2-8B (1.578h @ $2.49)",
+   "time": 1794343420.748429,
+   "kind": "manual"
+  },
+  {
+   "phase": "eval_ablation",
+   "cost": 0.0191,
+   "note": "Bench meta pod RTX 4090 community flv2pjjx7cvcs2: faulty host (CUDA unknown error), terminated unused (0.056h @ $0.34)",
+   "time": 1794343420.78775,
+   "kind": "manual"
+  },
+  {
+   "phase": "eval_ablation",
+   "cost": 0.8658,
+   "note": "Bench meta2 pod RTX PRO 6000 secure ii3r2kxv65uwsm: Llama-3.2-3B + MobileLLM-Pro (transformers 4.56.2 venv) (0.348h @ $2.49)",
+   "time": 1794343420.824969,
+   "kind": "manual"
   }
  ],
  "open": null
