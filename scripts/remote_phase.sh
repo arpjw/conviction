@@ -92,7 +92,7 @@ case "$1" in
       else
         echo "=== MODEL_FAIL $m $(date -u +%H:%M:%S)"
       fi
-      rm -rf "$HF_HOME/hub/models--${m//\//--}"
+      rm -rf "$HF_HOME/hub"   # one model at a time; newer huggingface_hub keeps files in hub/blobs, so clear it all
     done ;;
   think)
     # Thinking-on control. THINK_MODELS="org/name:batch,..."; same 90-group test_structural sample as the API track.
@@ -113,7 +113,7 @@ case "$1" in
       else
         echo "=== MODEL_FAIL $m $(date -u +%H:%M:%S)"
       fi
-      rm -rf "$HF_HOME/hub/models--${m//\//--}"
+      rm -rf "$HF_HOME/hub"   # one model at a time; newer huggingface_hub keeps files in hub/blobs, so clear it all
     done ;;
 esac
 tar czf /workspace/results_$1.tgz results
