@@ -4,7 +4,7 @@ Can a small language model learn **when to stand its ground, when to change its 
 
 Base model: `Qwen/Qwen3-1.7B` (non-thinking mode). Budget: ≤ $40 of GPU time.
 
-**Project page:** https://aryasomu.com/conviction/ · **Dataset:** [arpjw/ConvictionBench](https://huggingface.co/datasets/arpjw/ConvictionBench) · **Models:** [arpjw/conviction-1.7b-sft](https://huggingface.co/arpjw/conviction-1.7b-sft), [arpjw/conviction-1.7b-rl](https://huggingface.co/arpjw/conviction-1.7b-rl), [arpjw/conviction-1.7b-v2](https://huggingface.co/arpjw/conviction-1.7b-v2)
+**Project page:** https://convictionbench.org/ · **Dataset:** [arpjw/ConvictionBench](https://huggingface.co/datasets/arpjw/ConvictionBench) · **Models:** [arpjw/conviction-1.7b-sft](https://huggingface.co/arpjw/conviction-1.7b-sft), [arpjw/conviction-1.7b-rl](https://huggingface.co/arpjw/conviction-1.7b-rl), [arpjw/conviction-1.7b-v2](https://huggingface.co/arpjw/conviction-1.7b-v2)
 
 **Status (2026-11-10):** ConvictionBench v0.1 frozen and released; base, prompting, SFT, SFT→GRPO, a matched SFT control and GRPO-only runs complete (GRPO-only replicated with a second seed); 14 off-the-shelf open models benchmarked, plus a thinking-mode control and a v2 training recipe. Total compute ≈ $26 of rented GPU time ([ledger](results/budget_ledger.json)); a separate frontier API track (GPT models, reserved for a future harder challenge, not on the leaderboard) used ≈ $39 of OpenAI credit. Working report draft: [research/REPORT.md](research/REPORT.md); full experiment log: [research/EXPERIMENTS.md](research/EXPERIMENTS.md); tables: [results/tables/main_results.md](results/tables/main_results.md).
 
@@ -33,7 +33,7 @@ Base model: `Qwen/Qwen3-1.7B` (non-thinking mode). Budget: ≤ $40 of GPU time.
 
 ¹ Custom code needs transformers 4.56; follows the strict format in about half of answers. ² Mostly ignores the JSON-only instruction (5% strict format); scores mainly reflect format compliance.
 
-Off-the-shelf open models rarely resist forged records pasted into user messages (13 of 14 ≤ 0.25; best 0.26); our GRPO adapter has the lowest pressure-flip rate of the 18 models. **Thinking mode** (Qwen3-1.7B/8B, Qwen3.5-9B, Granite-4.2-8B, paired on the same episodes) raises accuracy and lowers pressure flips but *lowers* forged-record resistance; see the [results page](https://aryasomu.com/conviction/#thinking) and `results/comparisons/T_thinking_vs_nonthinking.json`. Per-model protocol notes (GPU, transformers version, kernels) are in each `results/*/run_info.json` and in [research/EXPERIMENTS.md](research/EXPERIMENTS.md) §§ B, B2, T.
+Off-the-shelf open models rarely resist forged records pasted into user messages (13 of 14 ≤ 0.25; best 0.26); our GRPO adapter has the lowest pressure-flip rate of the 18 models. **Thinking mode** (Qwen3-1.7B/8B, Qwen3.5-9B, Granite-4.2-8B, paired on the same episodes) raises accuracy and lowers pressure flips but *lowers* forged-record resistance; see the [results page](https://convictionbench.org/#thinking) and `results/comparisons/T_thinking_vs_nonthinking.json`. Per-model protocol notes (GPU, transformers version, kernels) are in each `results/*/run_info.json` and in [research/EXPERIMENTS.md](research/EXPERIMENTS.md) §§ B, B2, T.
 
 ### Training results (Qwen3-1.7B)
 
@@ -128,6 +128,6 @@ Code: Apache-2.0. Data: CC-BY-4.0. Adapters: Apache-2.0 (base model Qwen3-1.7B, 
   author = {Somu, Arya},
   year   = {2026},
   note   = {v0.1},
-  url    = {https://aryasomu.com/conviction/}
+  url    = {https://convictionbench.org/}
 }
 ```

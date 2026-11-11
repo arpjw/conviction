@@ -1,6 +1,6 @@
-"""Export ConvictionBench results for the project web page (aryasomu.com/conviction).
+"""Export ConvictionBench results for the project web page (convictionbench.org).
 
-    python scripts/export_site.py ~/dev/arpjw.github.io/conviction/data.json
+    python scripts/export_site.py ~/dev/convictionbench/data.json
     python scripts/export_site.py out.json --include-api   # also proprietary API-track rows (not on the public bench)
 
 Every number on the page comes from results/*/metrics.json and breakdown_*.json; nothing is typed by hand.

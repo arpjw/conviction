@@ -150,7 +150,7 @@ With **thinking mode** on, open models become more accurate and harder to pressu
 records (paired comparison on the same episodes; see the project page).
 
 Full tables with 95% CIs and all metrics: `results/` in the [code repository](https://github.com/arpjw/conviction) and the
-[project page](https://aryasomu.com/conviction/).
+[project page](https://convictionbench.org/).
 
 ## Limitations
 
@@ -173,6 +173,6 @@ Full tables with 95% CIs and all metrics: `results/` in the [code repository](ht
   author = {Somu, Arya},
   year   = {2026},
   note   = {v0.1},
-  url    = {https://aryasomu.com/conviction/}
+  url    = {https://convictionbench.org/}
 }
 ```
