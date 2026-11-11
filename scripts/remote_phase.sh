@@ -79,14 +79,17 @@ case "$1" in
   bench)
     # Multi-model baselines. BENCH_MODELS="org/name[:batch],..." ; each model: 2-group smoke, then full eval.
     # A failing model is logged (MODEL_FAIL) and skipped; its HF cache is deleted afterwards to save disk.
+    # BENCH_ENGINE=vllm BENCH_PY=/workspace/vllm-venv/bin/python runs the same protocol on vLLM (B3 onwards);
+    # BENCH_PREFIX names the result dirs (B = leaderboard, P = HF/vLLM parity re-runs).
     S=test_id,test_template,test_structural,test_adversarial
+    ENGINE=${BENCH_ENGINE:-hf}; PY=${BENCH_PY:-$RUN}; PREFIX=${BENCH_PREFIX:-B}
     IFS=',' read -ra MS <<< "$BENCH_MODELS"
     for spec in "${MS[@]}"; do
       m=${spec%%:*}; bs=${spec#*:}; [ "$bs" = "$spec" ] && bs=32
-      name=B_$(echo "${m#*/}" | tr '.' '_')
-      echo "=== MODEL_START $m (batch $bs) $(date -u +%H:%M:%S)"
-      if $RUN -m conviction.evaluation.runner --model "$m" --condition base --splits test_id --limit-groups 2 --batch-size $bs --max-new-tokens 200 --n-boot 50 --out results/smoke/$name \
-         && $RUN -m conviction.evaluation.runner --model "$m" --condition base --splits $S --natural --batch-size $bs --max-new-tokens 200 --out results/$name; then
+      name=${PREFIX}_$(echo "${m#*/}" | tr '.' '_')
+      echo "=== MODEL_START $m (batch $bs, engine $ENGINE) $(date -u +%H:%M:%S)"
+      if $PY -m conviction.evaluation.runner --engine $ENGINE --model "$m" --condition base --splits test_id --limit-groups 2 --batch-size $bs --max-new-tokens 200 --n-boot 50 --out results/smoke/$name \
+         && $PY -m conviction.evaluation.runner --engine $ENGINE --model "$m" --condition base --splits $S --natural --batch-size $bs --max-new-tokens 200 --out results/$name; then
         echo "=== MODEL_DONE $m $(date -u +%H:%M:%S)"
         tar czf /workspace/results_$name.tgz results/$name results/smoke/$name
       else

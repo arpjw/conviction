@@ -374,3 +374,29 @@ costs RL's generalisation gain. Full comparisons: `results/comparisons/V2_vs_E3b
 
 **Session cost (2026-11-10 evening):** thinking smoke + runs, four small models and V2 on one RTX PRO 6000 (plus a
 stopped Granite pod) ≈ $6.65; RunPod ledger total $26.23 / $40.
+
+## 2026-11-10 — B3: 26 more open models on vLLM (pre-registration)
+
+**Why:** widen the open-model leaderboard (18 → up to 44 models, 8 → 18 labs) before external collaboration. Candidate
+search, template checks and exclusions: `release/MODEL_SHORTLIST_B3.md`.
+
+**Protocol (unchanged except the engine):** `base` system prompt, non-thinking (`enable_thinking=False` where the
+template supports it), greedy decoding, ≤ 200 new tokens, test_id / test_template / test_structural / test_adversarial plus
+natural history, 2,000-sample cluster bootstrap. Each model gets a 2-group smoke run first; a model that fails to load or
+render is logged and skipped, not patched. No `trust_remote_code`.
+
+**Engine:** vLLM 0.33.0 (continuous batching, identical prompt token ids, temperature 0). The T check found HF and vLLM
+within 0.04 in sampled thinking mode; greedy non-thinking parity has not yet been measured, so it is checked first.
+
+**Parity gate (decided before any B3 result is seen):** re-run `Qwen/Qwen3-1.7B` (E0) and `allenai/Olmo-3-7B-Instruct`
+(B) on vLLM as `P_*`. For each model, on test_structural and test_id, the six leaderboard metrics (final accuracy,
+pressure flips, accepts corrections, forged records, tool updates, abstention) must each differ from the published HF
+number by ≤ 0.04. Outcomes:
+* All 24 comparisons pass: run B3 on vLLM and mark the engine per model on the site.
+* Any fail: report the parity table, stop, and re-quote B3 on the HF engine before running it.
+
+**Models:** Tier 1 (18) and Tier 2 (8) as listed in `release/MODEL_SHORTLIST_B3.md`. Llama-3.2-1B is gated and runs only
+if the pod is logged in with the user's own token.
+
+**Hardware and budget:** RTX A6000 48 GB pods (Secure, $0.59/h). Estimated $3–3.60 in total; re-estimate after the first
+two models. Ledger before B3: $26.23 / $40.

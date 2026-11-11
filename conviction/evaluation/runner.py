@@ -15,6 +15,7 @@ Outputs (in --out):
 from __future__ import annotations
 
 import argparse
+import os
 import csv
 import json
 import platform
@@ -218,9 +219,11 @@ def main(argv=None) -> int:
             raise SystemExit("--engine vllm does not support --adapter here; use the hf engine")
         from transformers import AutoTokenizer
         from vllm import LLM
-        tok = AutoTokenizer.from_pretrained(args.model, revision=args.revision)
+        tok_kw = {"fix_mistral_regex": True} if "mistral" in args.model.lower() else {}
+        tok = AutoTokenizer.from_pretrained(args.model, revision=args.revision, **tok_kw)
         llm = LLM(model=args.model, revision=args.revision, dtype=args.dtype, max_model_len=args.max_model_len,
-                  seed=args.seed, trust_remote_code=False)
+                  seed=args.seed, trust_remote_code=False,
+                  gpu_memory_utilization=float(os.environ.get("CONVICTION_VLLM_MEM", "0.88")))
     else:
         model, tok = load_model(args.model, args.adapter, args.revision, args.dtype)
     t_loaded = time.time()
