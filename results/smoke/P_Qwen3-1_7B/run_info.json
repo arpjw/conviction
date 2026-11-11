@@ -1,0 +1,45 @@
+{
+ "model": "Qwen/Qwen3-1.7B",
+ "revision": null,
+ "adapter": null,
+ "condition": "base",
+ "decoding": {
+  "do_sample": false,
+  "temperature": null,
+  "top_p": null,
+  "top_k": null,
+  "seed": 0,
+  "max_new_tokens": 200,
+  "enable_thinking": false
+ },
+ "groups_per_split": 0,
+ "sample_seed": 20261110,
+ "generation_stats": {
+  "test_id": {
+   "episodes": 25,
+   "mean_gen_tokens": 62.32,
+   "max_gen_tokens": 112,
+   "hit_max_new_tokens": 0,
+   "thinking_unfinished": 0
+  }
+ },
+ "batch_size": 32,
+ "dtype": "bfloat16",
+ "splits": "test_id",
+ "limit_groups": 2,
+ "timing": {
+  "test_id": {
+   "episodes": 25,
+   "seconds": 0.9361691474914551
+  }
+ },
+ "oom_splits": [],
+ "load_seconds": 115.65657377243042,
+ "total_seconds": 116.76437282562256,
+ "torch": "2.14.0+cu130",
+ "transformers": "5.20.2",
+ "engine": "vllm",
+ "device": "cuda (vllm)",
+ "python": "3.12.3",
+ "gpu": "NVIDIA RTX A6000"
+}

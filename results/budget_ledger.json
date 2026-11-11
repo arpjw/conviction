@@ -145,6 +145,20 @@
    "end": 1794364843.318065,
    "note": "",
    "kind": "measured_session"
+  },
+  {
+   "phase": "eval_ablation",
+   "cost": 1.416,
+   "note": "B3 pod A RTX A6000 secure wa06tbm5z475kd: parity (2) + 12 models, vLLM; ~06:48-09:12 UTC 2026-11-11 (idle 08:34-09:12)",
+   "time": 1794392741.518688,
+   "kind": "manual"
+  },
+  {
+   "phase": "eval_ablation",
+   "cost": 2.1358,
+   "note": "B3 pod B RTX A6000 secure fexn2uv21nqrbz: 13 models, vLLM; ~06:48-10:25 UTC (idle 09:13-10:25, watcher bug)",
+   "time": 1794392741.518688,
+   "kind": "manual"
   }
  ],
  "open": null

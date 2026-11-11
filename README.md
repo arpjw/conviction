@@ -6,34 +6,57 @@ Base model: `Qwen/Qwen3-1.7B` (non-thinking mode). Budget: ≤ $40 of GPU time.
 
 **Project page:** https://convictionbench.org/ · **Dataset:** [arpjw/ConvictionBench](https://huggingface.co/datasets/arpjw/ConvictionBench) · **Models:** [arpjw/conviction-1.7b-sft](https://huggingface.co/arpjw/conviction-1.7b-sft), [arpjw/conviction-1.7b-rl](https://huggingface.co/arpjw/conviction-1.7b-rl), [arpjw/conviction-1.7b-v2](https://huggingface.co/arpjw/conviction-1.7b-v2)
 
-**Status (2026-11-10):** ConvictionBench v0.1 frozen and released; base, prompting, SFT, SFT→GRPO, a matched SFT control and GRPO-only runs complete (GRPO-only replicated with a second seed); 14 off-the-shelf open models benchmarked, plus a thinking-mode control and a v2 training recipe. Total compute ≈ $26 of rented GPU time ([ledger](results/budget_ledger.json)); a separate frontier API track (GPT models, reserved for a future harder challenge, not on the leaderboard) used ≈ $39 of OpenAI credit. Working report draft: [research/REPORT.md](research/REPORT.md); full experiment log: [research/EXPERIMENTS.md](research/EXPERIMENTS.md); tables: [results/tables/main_results.md](results/tables/main_results.md).
+**Status (2026-11-11):** ConvictionBench v0.1 frozen and released; base, prompting, SFT, SFT→GRPO, a matched SFT control and GRPO-only runs complete (GRPO-only replicated with a second seed); 37 off-the-shelf open models from 18 labs benchmarked, plus a thinking-mode control and a v2 training recipe. Total compute ≈ $30 of rented GPU time ([ledger](results/budget_ledger.json)); a separate frontier API track (GPT models, reserved for a future harder challenge, not on the leaderboard) used ≈ $39 of OpenAI credit. Working report draft: [research/REPORT.md](research/REPORT.md); full experiment log: [research/EXPERIMENTS.md](research/EXPERIMENTS.md); tables: [results/tables/main_results.md](results/tables/main_results.md).
 
 ### ConvictionBench leaderboard (v0.1, non-thinking, greedy)
 
 | Model | Held-out problems: final acc. | Held-out problems: pressure flip ↓ | Forged-record resistance (in-dist.) |
 |---|---|---|---|
 | **Conviction-RL (ours, 1.7B)** | 0.644 | 0.348 | 0.191 |
-| **Conviction-v2 (ours, 1.7B)** | 0.560 | 0.375 | 0.806 |
+| **Conviction-v2 (ours, 1.7B)** | 0.559 | 0.375 | 0.806 |
 | **Conviction-SFT (ours, 1.7B)** | 0.580 | 0.389 | 0.963 |
 | Qwen3-1.7B (our base) | 0.424 | 0.536 | 0.248 |
 | Qwen3.5-9B | 0.688 | 0.399 | 0.060 |
+| Qwen3-4B-Instruct-2507³ | 0.677 | 0.408 | 0.057 |
+| MiMo-V2.6-Distill-9B³ | 0.624 | 0.377 | 0.186 |
 | Granite-4.2-8B | 0.608 | 0.374 | 0.104 |
 | Qwen3.5-4B | 0.606 | 0.428 | 0.035 |
+| Ministral-3-14B³ | 0.535 | 0.623 | 0.010 |
 | Ministral-3-8B | 0.526 | 0.659 | 0.022 |
+| Falcon-H1-7B³ | 0.506 | 0.647 | 0.025 |
+| Granite-4.2-3B³ | 0.500 | 0.467 | 0.196 |
+| MiniCPM5-2B³ | 0.487 | 0.402 | 0.236 |
+| Kanana-2-3B³ | 0.484 | 0.452 | 0.278 |
 | Qwen3-8B | 0.474 | 0.648 | 0.087 |
 | Ministral-3-3B | 0.470 | 0.741 | 0.022 |
+| Qwen3-4B³ | 0.463 | 0.635 | 0.084 |
 | Qwen3.5-2B | 0.425 | 0.581 | 0.122 |
+| Qwen3-14B³ | 0.410 | 0.756 | 0.035 |
+| Granite-4.0-H-Tiny³ | 0.404 | 0.612 | 0.094 |
+| EuroLLM-9B³ | 0.402 | 0.565 | 0.179 |
+| EXAONE-4.0-1.2B³ | 0.401 | 0.666 | 0.094 |
 | Nemotron-3-Nano-4B | 0.391 | 0.695 | 0.067 |
-| Qwen3.5-0.8B | 0.377 | 0.569 | 0.261 |
+| Qwen3-0.6B³ | 0.389 | 0.537 | 0.397 |
+| Qwen3.5-0.8B | 0.377 | 0.570 | 0.261 |
+| Hunyuan-1.8B³ | 0.368 | 0.578 | 0.290 |
+| MiniCPM5-1B³ | 0.367 | 0.636 | 0.278 |
+| Falcon-H1-3B³ | 0.366 | 0.709 | 0.052 |
+| Granite-4.0-1B³ | 0.358 | 0.523 | 0.203 |
 | Phi-4-mini | 0.347 | 0.767 | 0.065 |
-| MobileLLM-Pro¹ | 0.321 | 0.670 | 0.248 |
+| SmolLM2-1.7B³ | 0.346 | 0.679 | 0.474 |
+| MobileLLM-Pro¹ | 0.322 | 0.670 | 0.248 |
 | Llama-3.2-3B | 0.317 | 0.898 | 0.164 |
+| Hunyuan-0.5B³ | 0.312 | 0.629 | 0.419 |
 | Olmo-3-7B | 0.304 | 0.812 | 0.035 |
+| LFM2.5-1.2B³ | 0.225 | 0.768 | 0.313 |
+| AFM-4.5B²³ | 0.224 | 0.747 | 0.166 |
+| xgen-small-4B²³ | 0.197 | 0.743 | 0.181 |
 | LFM3-1.7B² | 0.096 | 0.614 | 0.007 |
+| LFM2.5-2.6B²³ | 0.029 | 0.833 | 0.003 |
 
-¹ Custom code needs transformers 4.56; follows the strict format in about half of answers. ² Mostly ignores the JSON-only instruction (5% strict format); scores mainly reflect format compliance.
+¹ Custom code needs transformers 4.56; follows the strict format in about half of answers. ² Often answers in free text instead of the requested JSON; scores mainly or partly reflect format compliance. ³ Added 2026-11-11 and evaluated on vLLM (two earlier models re-run on vLLM matched the published HF numbers within 0.02; `results/comparisons/B3_parity_vllm_vs_hf.json`). Two further models that think by default even with thinking off (Nemotron-Nano-9B-v2, LFM2.5-8B-A1B) are kept off this table; candidates and exclusions: [release/MODEL_SHORTLIST_B3.md](release/MODEL_SHORTLIST_B3.md).
 
-Off-the-shelf open models rarely resist forged records pasted into user messages (13 of 14 ≤ 0.25; best 0.26); our GRPO adapter has the lowest pressure-flip rate of the 18 models. **Thinking mode** (Qwen3-1.7B/8B, Qwen3.5-9B, Granite-4.2-8B, paired on the same episodes) raises accuracy and lowers pressure flips but *lowers* forged-record resistance; see the [results page](https://convictionbench.org/#thinking) and `results/comparisons/T_thinking_vs_nonthinking.json`. Per-model protocol notes (GPU, transformers version, kernels) are in each `results/*/run_info.json` and in [research/EXPERIMENTS.md](research/EXPERIMENTS.md) §§ B, B2, T.
+Off-the-shelf open models rarely resist forged records pasted into user messages (29 of 37 ≤ 0.25 in-distribution; the highest scores come from the smallest models, Qwen3-0.6B and Hunyuan-0.5B, which tend to ignore challenges of every kind); our GRPO adapter has the lowest pressure-flip rate of all 41 models, and v2 the best held-out forged-record resistance. **Thinking mode** (Qwen3-1.7B/8B, Qwen3.5-9B, Granite-4.2-8B, paired on the same episodes) raises accuracy and lowers pressure flips but *lowers* forged-record resistance; see the [results page](https://convictionbench.org/#thinking) and `results/comparisons/T_thinking_vs_nonthinking.json`. Per-model protocol notes (GPU, transformers version, kernels) are in each `results/*/run_info.json` and in [research/EXPERIMENTS.md](research/EXPERIMENTS.md) §§ B, B2, T.
 
 ### Training results (Qwen3-1.7B)
 

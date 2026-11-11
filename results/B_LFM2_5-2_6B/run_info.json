@@ -1,0 +1,92 @@
+{
+ "model": "LiquidAI/LFM2.5-2.6B",
+ "revision": null,
+ "adapter": null,
+ "condition": "base",
+ "decoding": {
+  "do_sample": false,
+  "temperature": null,
+  "top_p": null,
+  "top_k": null,
+  "seed": 0,
+  "max_new_tokens": 200,
+  "enable_thinking": false
+ },
+ "groups_per_split": 0,
+ "sample_seed": 20261110,
+ "generation_stats": {
+  "test_id": {
+   "episodes": 2393,
+   "mean_gen_tokens": 194.71792728792312,
+   "max_gen_tokens": 200,
+   "hit_max_new_tokens": 2029,
+   "thinking_unfinished": 0
+  },
+  "test_id_natural": {
+   "episodes": 138,
+   "mean_gen_tokens": 180.94202898550725,
+   "max_gen_tokens": 200,
+   "hit_max_new_tokens": 70,
+   "thinking_unfinished": 0
+  },
+  "test_template": {
+   "episodes": 2674,
+   "mean_gen_tokens": 195.6432311144353,
+   "max_gen_tokens": 200,
+   "hit_max_new_tokens": 2323,
+   "thinking_unfinished": 0
+  },
+  "test_template_natural": {
+   "episodes": 106,
+   "mean_gen_tokens": 186.80188679245282,
+   "max_gen_tokens": 200,
+   "hit_max_new_tokens": 56,
+   "thinking_unfinished": 0
+  },
+  "test_structural": {
+   "episodes": 2788,
+   "mean_gen_tokens": 197.09505021520803,
+   "max_gen_tokens": 200,
+   "hit_max_new_tokens": 2588,
+   "thinking_unfinished": 0
+  },
+  "test_adversarial": {
+   "episodes": 22,
+   "mean_gen_tokens": 192.5909090909091,
+   "max_gen_tokens": 200,
+   "hit_max_new_tokens": 18,
+   "thinking_unfinished": 0
+  }
+ },
+ "batch_size": 32,
+ "dtype": "bfloat16",
+ "splits": "test_id,test_template,test_structural,test_adversarial",
+ "limit_groups": null,
+ "timing": {
+  "test_id": {
+   "episodes": 2393,
+   "seconds": 64.02792978286743
+  },
+  "test_template": {
+   "episodes": 2674,
+   "seconds": 72.81827116012573
+  },
+  "test_structural": {
+   "episodes": 2788,
+   "seconds": 73.74046015739441
+  },
+  "test_adversarial": {
+   "episodes": 22,
+   "seconds": 2.5210061073303223
+  }
+ },
+ "oom_splits": [],
+ "load_seconds": 36.37695932388306,
+ "total_seconds": 257.914603471756,
+ "torch": "2.14.0+cu130",
+ "transformers": "5.20.2",
+ "engine": "vllm",
+ "device": "cuda (vllm)",
+ "python": "3.12.3",
+ "gpu": "NVIDIA RTX A6000"
+}

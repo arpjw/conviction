@@ -34,6 +34,32 @@ MODELS = [
     ("B_Qwen3_5-0_8B", "Qwen3.5-0.8B", "Alibaba", "0.8B", "other"),
     ("B_Ministral-3-3B-Instruct-2512-BF16", "Ministral-3-3B", "Mistral", "3B", "other"),
     ("B_LFM3-1_7B", "LFM3-1.7B", "Liquid AI", "1.7B", "other"),
+    # B3 (2026-11-11): 23 more open models, vLLM engine (parity with HF checked: results/comparisons/B3_parity_vllm_vs_hf.json)
+    ("B_Qwen3-14B", "Qwen3-14B", "Alibaba", "14B", "other"),
+    ("B_Qwen3-4B-Instruct-2507", "Qwen3-4B-Instruct-2507", "Alibaba", "4B", "other"),
+    ("B_Qwen3-4B", "Qwen3-4B", "Alibaba", "4B", "other"),
+    ("B_Qwen3-0_6B", "Qwen3-0.6B", "Alibaba", "0.6B", "other"),
+    ("B_MiMo-V2_6-Distill-Qwen-9B", "MiMo-V2.6-Distill-9B", "Xiaomi", "9B", "other"),
+    ("B_Ministral-3-14B-Instruct-2512-BF16", "Ministral-3-14B", "Mistral", "14B", "other"),
+    ("B_granite-4_2-3b", "Granite-4.2-3B", "IBM", "3B", "other"),
+    ("B_granite-4_0-h-tiny", "Granite-4.0-H-Tiny", "IBM", "7B MoE", "other"),
+    ("B_granite-4_0-1b", "Granite-4.0-1B", "IBM", "1.6B", "other"),
+    ("B_Falcon-H1-7B-Instruct", "Falcon-H1-7B", "TII", "7B", "other"),
+    ("B_Falcon-H1-3B-Instruct", "Falcon-H1-3B", "TII", "3B", "other"),
+    ("B_MiniCPM5-2B", "MiniCPM5-2B", "OpenBMB", "2.5B", "other"),
+    ("B_MiniCPM5-1B", "MiniCPM5-1B", "OpenBMB", "1.1B", "other"),
+    ("B_kanana-2-3b-instruct", "Kanana-2-3B", "Kakao", "3.5B", "other"),
+    ("B_EuroLLM-9B-Instruct-2512", "EuroLLM-9B", "EuroLLM", "9B", "other"),
+    ("B_EXAONE-4_0-1_2B", "EXAONE-4.0-1.2B", "LG AI", "1.2B", "other"),
+    ("B_Hunyuan-1_8B-Instruct", "Hunyuan-1.8B", "Tencent", "1.8B", "other"),
+    ("B_Hunyuan-0_5B-Instruct", "Hunyuan-0.5B", "Tencent", "0.5B", "other"),
+    ("B_SmolLM2-1_7B-Instruct", "SmolLM2-1.7B", "Hugging Face", "1.7B", "other"),
+    ("B_LFM2_5-1_2B-Instruct", "LFM2.5-1.2B", "Liquid AI", "1.2B", "other"),
+    ("B_LFM2_5-2_6B", "LFM2.5-2.6B", "Liquid AI", "2.6B", "other"),
+    ("B_AFM-4_5B", "AFM-4.5B", "Arcee", "4.5B", "other"),
+    ("B_xgen-small-4B-instruct-r", "xgen-small-4B", "Salesforce", "4B", "other"),
+    # Not on the leaderboard: think by default despite enable_thinking=False and exhaust the 200-token budget before
+    # answering (results kept: B_NVIDIA-Nemotron-Nano-9B-v2, B_LFM2_5-8B-A1B). Candidates for the thinking track.
 ]
 # Proprietary models evaluated through provider APIs (API track: default reasoning, 90-group sample of test_structural).
 # Not shown on the public ConvictionBench page (decision 2026-11-10): the open-model bench stays open-weight only, and
@@ -57,6 +83,15 @@ NOTES = {
     "V2": "1,000-example SFT warm-start, then the same 200-step GRPO as Conviction-RL. Weights: arpjw/conviction-1.7b-v2.",
     "B_LFM3-1_7B": "Mostly ignores the JSON-only instruction and reasons in free text (strict format 5%), often running "
                    "past the 200-token limit; its scores mainly measure format compliance.",
+    "B_LFM2_5-2_6B": "Answers in free-text working instead of the requested JSON (parsed 5%), usually hitting the 200-token "
+                     "limit; its scores mainly measure format compliance.",
+    "B_xgen-small-4B-instruct-r": "Writes step-by-step working before (or instead of) the JSON reply and often hits the "
+                                  "200-token limit (parsed 43%); its scores partly measure format compliance.",
+    "B_AFM-4_5B": "Often writes free-text working instead of JSON (parsed 75%); its scores partly measure format compliance.",
+    "B_Hunyuan-1_8B-Instruct": "Wraps its JSON reply in <answer> tags: parsed 96%, strict format 0%.",
+    "B_Hunyuan-0_5B-Instruct": "Wraps its JSON reply in <answer> tags, so strict format is 0%.",
+    "B_granite-4_2-3b": "Often repeats its JSON reply after a stray </think> tag (strict format 54%, parsed 96%).",
+    "B_LFM2_5-1_2B-Instruct": "Usually gives the answer as a bare number rather than a string (strict format 13%, parsed 99%).",
 }
 
 
@@ -77,7 +112,8 @@ def main(out: str, include_api: bool = False) -> None:
                    "hf_id": info["model"] if (group == "other" and track == "open") else None,
                    "api_model": info["model"] if track == "proprietary" else None,
                    "sample": f"{info['groups_per_split']} groups" if track == "proprietary" else "full split",
-                   "note": NOTES.get(key), "metrics": {}, "natural": {}, "pressure": {}}
+                   "note": NOTES.get(key), "engine": info.get("engine", "hf"),
+                   "metrics": {}, "natural": {}, "pressure": {}}
             splits = [s for s in SPLITS if s in m]
             for s in splits:
                 a = m[s]["all"]
@@ -121,7 +157,9 @@ def main(out: str, include_api: bool = False) -> None:
     data = {"benchmark": "ConvictionBench v0.1",
             "hashes": {k: v["sha256"][:12] for k, v in manifest["splits"].items()},
             "protocol": "Base system prompt, non-thinking, greedy decoding, at most 200 new tokens. "
-                        "95% cluster-bootstrap intervals (2,000 resamples over problem groups).",
+                        "95% cluster-bootstrap intervals (2,000 resamples over problem groups). "
+                        "Models added on 2026-11-11 ran on vLLM; re-running two earlier models on vLLM reproduced "
+                        "their published numbers within 0.02.",
             "api_protocol": "Proprietary models: same system prompt and response format through provider APIs, tool "
                             "records sent as native tool calls, default reasoning, 90 sampled problem groups of the "
                             "held-out split plus natural history. Not a like-for-like comparison with the open track.",

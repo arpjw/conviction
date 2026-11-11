@@ -1,0 +1,92 @@
+{
+ "model": "nvidia/NVIDIA-Nemotron-Nano-9B-v2",
+ "revision": null,
+ "adapter": null,
+ "condition": "base",
+ "decoding": {
+  "do_sample": false,
+  "temperature": null,
+  "top_p": null,
+  "top_k": null,
+  "seed": 0,
+  "max_new_tokens": 200,
+  "enable_thinking": false
+ },
+ "groups_per_split": 0,
+ "sample_seed": 20261110,
+ "generation_stats": {
+  "test_id": {
+   "episodes": 2393,
+   "mean_gen_tokens": 199.0480568324279,
+   "max_gen_tokens": 200,
+   "hit_max_new_tokens": 2302,
+   "thinking_unfinished": 0
+  },
+  "test_id_natural": {
+   "episodes": 48,
+   "mean_gen_tokens": 196.8125,
+   "max_gen_tokens": 200,
+   "hit_max_new_tokens": 42,
+   "thinking_unfinished": 0
+  },
+  "test_template": {
+   "episodes": 2674,
+   "mean_gen_tokens": 199.35527299925207,
+   "max_gen_tokens": 200,
+   "hit_max_new_tokens": 2589,
+   "thinking_unfinished": 0
+  },
+  "test_template_natural": {
+   "episodes": 42,
+   "mean_gen_tokens": 199.64285714285714,
+   "max_gen_tokens": 200,
+   "hit_max_new_tokens": 41,
+   "thinking_unfinished": 0
+  },
+  "test_structural": {
+   "episodes": 2788,
+   "mean_gen_tokens": 199.60401721664275,
+   "max_gen_tokens": 200,
+   "hit_max_new_tokens": 2731,
+   "thinking_unfinished": 0
+  },
+  "test_adversarial": {
+   "episodes": 22,
+   "mean_gen_tokens": 200.0,
+   "max_gen_tokens": 200,
+   "hit_max_new_tokens": 22,
+   "thinking_unfinished": 0
+  }
+ },
+ "batch_size": 32,
+ "dtype": "bfloat16",
+ "splits": "test_id,test_template,test_structural,test_adversarial",
+ "limit_groups": null,
+ "timing": {
+  "test_id": {
+   "episodes": 2393,
+   "seconds": 545.1058008670807
+  },
+  "test_template": {
+   "episodes": 2674,
+   "seconds": 611.4428095817566
+  },
+  "test_structural": {
+   "episodes": 2788,
+   "seconds": 637.5505893230438
+  },
+  "test_adversarial": {
+   "episodes": 22,
+   "seconds": 9.677438020706177
+  }
+ },
+ "oom_splits": [],
+ "load_seconds": 71.71657919883728,
+ "total_seconds": 1904.6436398029327,
+ "torch": "2.14.0+cu130",
+ "transformers": "5.20.2",
+ "engine": "vllm",
+ "device": "cuda (vllm)",
+ "python": "3.12.3",
+ "gpu": "NVIDIA RTX A6000"
+}

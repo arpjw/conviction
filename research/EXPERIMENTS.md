@@ -405,3 +405,23 @@ two models. Ledger before B3: $26.23 / $40.
 accepts corrections / forged records, test_structural); Olmo-3-7B max |Δ| = 0.008. B3 proceeds on vLLM as
 pre-registered. Table: `results/comparisons/B3_parity_vllm_vs_hf.json`; runs: `results/P_*`. vLLM was about 3.5× faster
 than HF for non-thinking eval (Qwen3-1.7B: 5 min on an A6000 vs 17 min with HF on a 4090).
+
+## 2026-11-11 — B3 results: 25 models run, 23 on the leaderboard
+
+All 25 runnable models finished (Llama-3.2-1B was not run: gated, no token on the pods). Two models think by default
+even with `enable_thinking=False` and spend the whole 200-token budget reasoning (Nemotron-Nano-9B-v2: 2% parsed;
+LFM2.5-8B-A1B: 27% parsed). They are kept off the non-thinking leaderboard as thinking-track candidates, consistent with
+the shortlist's thinking-only exclusion; their results stay in `results/`. Format notes are shown on the site for
+LFM2.5-2.6B, xgen-small-4B, AFM-4.5B (free-text answers), Hunyuan (JSON inside `<answer>` tags), Granite-4.2-3B and
+LFM2.5-1.2B.
+
+Leaderboard: 41 models (37 off-the-shelf from 18 labs). Conviction-RL keeps the lowest held-out pressure-flip rate
+(0.348; next Granite-4.2-8B 0.374), and Conviction-v2 the best held-out forged-record resistance (0.578; best
+off-the-shelf Qwen3-0.6B 0.477). Off-the-shelf models with in-distribution forged-record resistance > 0.25: 8 / 37. The
+highest scores come from the smallest models (Qwen3-0.6B, Hunyuan-0.5B, SmolLM2-1.7B), which also have high pressure-flip
+rates: this looks like indifference to challenges, not provenance checking. Qwen3-14B flips more than Qwen3-8B
+(0.756 vs 0.648), and the 2507 instruct refresh of Qwen3-4B is more accurate (0.677 vs 0.463) and flips less (0.408 vs
+0.635).
+
+**Cost:** two RTX A6000 pods, $3.55 including about 1.8 h of idle time (a monitoring bug kept one pod running after it
+finished). RunPod ledger: $29.78 / $40.

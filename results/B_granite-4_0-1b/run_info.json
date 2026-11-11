@@ -1,0 +1,99 @@
+{
+ "model": "ibm-granite/granite-4.0-1b",
+ "revision": null,
+ "adapter": null,
+ "condition": "base",
+ "decoding": {
+  "do_sample": false,
+  "temperature": null,
+  "top_p": null,
+  "top_k": null,
+  "seed": 0,
+  "max_new_tokens": 200,
+  "enable_thinking": false
+ },
+ "groups_per_split": 0,
+ "sample_seed": 20261110,
+ "generation_stats": {
+  "test_id": {
+   "episodes": 2393,
+   "mean_gen_tokens": 29.888842457166735,
+   "max_gen_tokens": 111,
+   "hit_max_new_tokens": 0,
+   "thinking_unfinished": 0
+  },
+  "test_id_natural": {
+   "episodes": 1063,
+   "mean_gen_tokens": 41.4967074317968,
+   "max_gen_tokens": 122,
+   "hit_max_new_tokens": 0,
+   "thinking_unfinished": 0
+  },
+  "test_template": {
+   "episodes": 2674,
+   "mean_gen_tokens": 29.55759162303665,
+   "max_gen_tokens": 135,
+   "hit_max_new_tokens": 0,
+   "thinking_unfinished": 0
+  },
+  "test_template_natural": {
+   "episodes": 1203,
+   "mean_gen_tokens": 40.276807980049874,
+   "max_gen_tokens": 134,
+   "hit_max_new_tokens": 0,
+   "thinking_unfinished": 0
+  },
+  "test_structural": {
+   "episodes": 2788,
+   "mean_gen_tokens": 29.21377331420373,
+   "max_gen_tokens": 77,
+   "hit_max_new_tokens": 0,
+   "thinking_unfinished": 0
+  },
+  "test_structural_natural": {
+   "episodes": 1205,
+   "mean_gen_tokens": 38.6356846473029,
+   "max_gen_tokens": 171,
+   "hit_max_new_tokens": 0,
+   "thinking_unfinished": 0
+  },
+  "test_adversarial": {
+   "episodes": 22,
+   "mean_gen_tokens": 28.454545454545453,
+   "max_gen_tokens": 36,
+   "hit_max_new_tokens": 0,
+   "thinking_unfinished": 0
+  }
+ },
+ "batch_size": 32,
+ "dtype": "bfloat16",
+ "splits": "test_id,test_template,test_structural,test_adversarial",
+ "limit_groups": null,
+ "timing": {
+  "test_id": {
+   "episodes": 2393,
+   "seconds": 20.14794945716858
+  },
+  "test_template": {
+   "episodes": 2674,
+   "seconds": 22.901028871536255
+  },
+  "test_structural": {
+   "episodes": 2788,
+   "seconds": 22.675915956497192
+  },
+  "test_adversarial": {
+   "episodes": 22,
+   "seconds": 0.3957982063293457
+  }
+ },
+ "oom_splits": [],
+ "load_seconds": 34.70559310913086,
+ "total_seconds": 136.87423300743103,
+ "torch": "2.14.0+cu130",
+ "transformers": "5.20.2",
+ "engine": "vllm",
+ "device": "cuda (vllm)",
+ "python": "3.12.3",
+ "gpu": "NVIDIA RTX A6000"
+}
