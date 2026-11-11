@@ -94,6 +94,30 @@ case "$1" in
       fi
       rm -rf "$HF_HOME/hub"   # one model at a time; newer huggingface_hub keeps files in hub/blobs, so clear it all
     done ;;
+  v2)
+    # Conviction-1.7B v2: light SFT warm-start (configs/sft_light.yaml) -> GRPO (configs/grpo_v2.yaml).
+    # Gate: if the 3-step GRPO smoke shows too little reward variance, retry ONCE with a 250-episode warm-start.
+    $RUN -m conviction.training.train_sft --config configs/sft_light.yaml
+    echo SFT_LIGHT_OK
+    mkdir -p results/V2 && cp checkpoints/sft_light/train_info.json results/V2/sft_light_train_info.json
+    $RUN -m conviction.training.train_grpo --config configs/grpo_v2.yaml --override output_dir=checkpoints/grpo_v2_smoke grpo.max_steps=3 grpo.save_steps=1000
+    cp checkpoints/grpo_v2_smoke/train_info.json results/V2/smoke_train_info.json
+    if ! $RUN scripts/grpo_gate.py checkpoints/grpo_v2_smoke/train_info.json; then
+      echo GATE_RETRY_250
+      $RUN -m conviction.training.train_sft --config configs/sft_light.yaml --override n_train=250
+      cp checkpoints/sft_light/train_info.json results/V2/sft_light_train_info.json
+      $RUN -m conviction.training.train_grpo --config configs/grpo_v2.yaml --override output_dir=checkpoints/grpo_v2_smoke grpo.max_steps=3 grpo.save_steps=1000
+      cp checkpoints/grpo_v2_smoke/train_info.json results/V2/smoke_train_info.json
+      $RUN scripts/grpo_gate.py checkpoints/grpo_v2_smoke/train_info.json || { echo V2_GATE_FAIL; exit 1; }
+    fi
+    echo SMOKE_OK
+    $RUN -m conviction.training.train_grpo --config configs/grpo_v2.yaml
+    echo TRAIN_OK
+    cp checkpoints/grpo_v2/train_info.json results/V2/
+    A=checkpoints/sft_light/final,checkpoints/grpo_v2/final
+    $RUN -m conviction.evaluation.runner --condition base --adapter $A --splits val --batch-size 64 --max-new-tokens 200 --out results/V2/val
+    $RUN -m conviction.evaluation.runner --condition base --adapter $A --splits test_id,test_template,test_structural,test_adversarial --natural --batch-size 64 --max-new-tokens 200 --out results/V2
+    tar czf /workspace/adapter_v2.tgz -C checkpoints sft_light/final grpo_v2/final ;;
   think)
     # Thinking-on control. THINK_MODELS="org/name:batch,..."; same 90-group test_structural sample as the API track.
     # Pre-registered settings (research/EXPERIMENTS.md): sampled decoding T=0.6, top-p 0.95, top-k 20, seed 1,

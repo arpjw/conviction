@@ -291,3 +291,20 @@ open-weight bench (the site change adding them was reverted). The reasoning GPTs
 (final accuracy 0.97, pressure flips 0.07–0.08 on held-out problems), so mixing them in compresses the differences the
 bench is designed to measure. The results (`results/A_*`, `results/AP_*`) are kept for a harder **frontier challenge**
 designed for strong reasoning models; `scripts/export_site.py --include-api` still exports them.
+
+## 2026-11-10 — V2: light-SFT warm-start → GRPO (pre-registration)
+
+**Motivation:** E2 (SFT) learned the provenance rule (forged-record resistance 0.96) but became stubborn on unseen
+problem types; E3b (GRPO from base) generalised and stayed correctable but never learned provenance (0.19). E3 (full SFT
+→ GRPO) failed because ~85% of GRPO groups had zero reward variance after full SFT.
+
+**Recipe:** stage 1 = SFT on 1,000 episodes (`configs/sft_light.yaml`; identical to E2 except n_train and output_dir);
+stage 2 = GRPO, 200 steps, identical to E3b except it starts from the stage-1 model (`configs/grpo_v2.yaml`).
+**Gate:** 3-step GRPO smoke + `scripts/grpo_gate.py` (fail if mean zero-std fraction > 0.70 or clipped > 0.20). If it
+fails, retry once with a 250-episode warm-start; if that also fails, stop and report (no further tuning).
+
+**Hypotheses (all vs E3b, test splits, paired cluster bootstrap):**
+* H-V2a: test_id forged-record resistance higher than E3b (interval of the difference excludes 0).
+* H-V2b: test_structural final accuracy non-inferior to E3b (lower bound of the difference > −0.03).
+* H-V2c: test_structural natural-history legitimate correction higher than E2 (unpaired cluster bootstrap, as for E3b).
+Seed 1 only (budget); a second seed only if results are borderline.
