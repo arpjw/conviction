@@ -127,7 +127,7 @@ scored on it, open an issue on the code repository.
 | Qwen3-1.7B (base) | 0.424 | 0.536 | 0.937 | 0.248 |
 | + SFT (ours, `arpjw/conviction-1.7b-sft`) | 0.580 | 0.389 | 0.857 | 0.963 |
 | + GRPO only (ours, `arpjw/conviction-1.7b-rl`) | 0.644 | 0.348 | 0.926 | 0.191 |
-| + light SFT → GRPO (ours, v2; not released) | 0.560 | 0.375 | 0.926 | 0.806 |
+| + light SFT → GRPO (ours, `arpjw/conviction-1.7b-v2`) | 0.560 | 0.375 | 0.926 | 0.806 |
 | Qwen3.5-9B | 0.688 | 0.399 | 0.886 | 0.060 |
 | Granite-4.2-8B | 0.608 | 0.374 | 0.777 | 0.104 |
 | Qwen3.5-4B | 0.606 | 0.428 | 0.909 | 0.035 |

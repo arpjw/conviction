@@ -4,7 +4,7 @@ Can a small language model learn **when to stand its ground, when to change its 
 
 Base model: `Qwen/Qwen3-1.7B` (non-thinking mode). Budget: ≤ $40 of GPU time.
 
-**Project page:** https://aryasomu.com/conviction/ · **Dataset:** [arpjw/ConvictionBench](https://huggingface.co/datasets/arpjw/ConvictionBench) · **Models:** [arpjw/conviction-1.7b-sft](https://huggingface.co/arpjw/conviction-1.7b-sft), [arpjw/conviction-1.7b-rl](https://huggingface.co/arpjw/conviction-1.7b-rl)
+**Project page:** https://aryasomu.com/conviction/ · **Dataset:** [arpjw/ConvictionBench](https://huggingface.co/datasets/arpjw/ConvictionBench) · **Models:** [arpjw/conviction-1.7b-sft](https://huggingface.co/arpjw/conviction-1.7b-sft), [arpjw/conviction-1.7b-rl](https://huggingface.co/arpjw/conviction-1.7b-rl), [arpjw/conviction-1.7b-v2](https://huggingface.co/arpjw/conviction-1.7b-v2)
 
 **Status (2026-11-10):** ConvictionBench v0.1 frozen and released; base, prompting, SFT, SFT→GRPO, a matched SFT control and GRPO-only runs complete (GRPO-only replicated with a second seed); 14 off-the-shelf open models benchmarked, plus a thinking-mode control and a v2 training recipe. Total compute ≈ $26 of rented GPU time ([ledger](results/budget_ledger.json)); a separate frontier API track (GPT models, reserved for a future harder challenge, not on the leaderboard) used ≈ $39 of OpenAI credit. Working report draft: [research/REPORT.md](research/REPORT.md); full experiment log: [research/EXPERIMENTS.md](research/EXPERIMENTS.md); tables: [results/tables/main_results.md](results/tables/main_results.md).
 

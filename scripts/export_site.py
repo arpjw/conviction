@@ -54,7 +54,7 @@ NOTES = {
     "B_MobileLLM-Pro": "Ships custom code for transformers 4.53; evaluated with transformers 4.56.2. "
                        "Follows the JSON format strictly in about half of responses, which lowers its scores.",
     "E3b_grpo_base": "Seed 1. A second seed (E6) reaches 0.642 test_structural final accuracy.",
-    "V2": "1,000-example SFT warm-start, then the same 200-step GRPO as Conviction-RL. Not yet released.",
+    "V2": "1,000-example SFT warm-start, then the same 200-step GRPO as Conviction-RL. Weights: arpjw/conviction-1.7b-v2.",
     "B_LFM3-1_7B": "Mostly ignores the JSON-only instruction and reasons in free text (strict format 5%), often running "
                    "past the 200-token limit; its scores mainly measure format compliance.",
 }
