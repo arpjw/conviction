@@ -127,6 +127,24 @@
    "note": "Bench meta2 pod RTX PRO 6000 secure ii3r2kxv65uwsm: Llama-3.2-3B + MobileLLM-Pro (transformers 4.56.2 venv) (0.348h @ $2.49)",
    "time": 1794343420.824969,
    "kind": "manual"
+  },
+  {
+   "phase": "eval_ablation",
+   "cost": 0.8143,
+   "note": "Think pod B (Granite) RTX PRO 6000 secure 2y1w0gjt99wve2 0.33h: stopped, ~15 min/batch (HF padding to 4096-token thinking) -> too costly",
+   "time": 1794355240.338005,
+   "kind": "manual"
+  },
+  {
+   "phase": "eval_ablation",
+   "gpu": "RTX PRO 6000 (secure) tqi4rzll4m2ry6",
+   "hours": 3.5915,
+   "rate": 2.49,
+   "cost": 8.9428,
+   "start": 1794351914.0206301,
+   "end": 1794364843.318065,
+   "note": "",
+   "kind": "measured_session"
   }
  ],
  "open": null
