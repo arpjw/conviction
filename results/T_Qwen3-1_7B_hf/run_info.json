@@ -1,0 +1,51 @@
+{
+ "model": "Qwen/Qwen3-1.7B",
+ "revision": null,
+ "adapter": null,
+ "condition": "base",
+ "decoding": {
+  "do_sample": true,
+  "temperature": 0.6,
+  "top_p": 0.95,
+  "top_k": 20,
+  "seed": 1,
+  "max_new_tokens": 4096,
+  "enable_thinking": true
+ },
+ "groups_per_split": 90,
+ "sample_seed": 20261110,
+ "generation_stats": {
+  "test_structural": {
+   "episodes": 1257,
+   "mean_gen_tokens": 456.5115354017502,
+   "max_gen_tokens": 2517,
+   "hit_max_new_tokens": 0,
+   "thinking_unfinished": 0
+  },
+  "test_structural_natural": {
+   "episodes": 529,
+   "mean_gen_tokens": 478.3383742911153,
+   "max_gen_tokens": 2786,
+   "hit_max_new_tokens": 0,
+   "thinking_unfinished": 0
+  }
+ },
+ "batch_size": 128,
+ "dtype": "bfloat16",
+ "splits": "test_structural",
+ "limit_groups": null,
+ "timing": {
+  "test_structural": {
+   "episodes": 1257,
+   "seconds": 1631.87197804451
+  }
+ },
+ "oom_splits": [],
+ "load_seconds": 7.274513006210327,
+ "total_seconds": 2658.02516579628,
+ "torch": "2.9.1+cu128",
+ "transformers": "5.22.2",
+ "device": "cuda:0",
+ "python": "3.12.3",
+ "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition"
+}

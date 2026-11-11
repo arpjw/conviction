@@ -1,0 +1,52 @@
+{
+ "model": "Qwen/Qwen3-8B",
+ "revision": null,
+ "adapter": null,
+ "condition": "base",
+ "decoding": {
+  "do_sample": true,
+  "temperature": 0.6,
+  "top_p": 0.95,
+  "top_k": 20,
+  "seed": 1,
+  "max_new_tokens": 4096,
+  "enable_thinking": true
+ },
+ "groups_per_split": 90,
+ "sample_seed": 20261110,
+ "generation_stats": {
+  "test_structural": {
+   "episodes": 1257,
+   "mean_gen_tokens": 611.6889419252187,
+   "max_gen_tokens": 4096,
+   "hit_max_new_tokens": 3,
+   "thinking_unfinished": 3
+  },
+  "test_structural_natural": {
+   "episodes": 504,
+   "mean_gen_tokens": 617.5992063492064,
+   "max_gen_tokens": 4096,
+   "hit_max_new_tokens": 2,
+   "thinking_unfinished": 2
+  }
+ },
+ "batch_size": 0,
+ "dtype": "bfloat16",
+ "splits": "test_structural",
+ "limit_groups": null,
+ "timing": {
+  "test_structural": {
+   "episodes": 1257,
+   "seconds": 142.46069169044495
+  }
+ },
+ "oom_splits": [],
+ "load_seconds": 73.16700387001038,
+ "total_seconds": 294.1732244491577,
+ "torch": "2.14.0+cu130",
+ "transformers": "5.20.2",
+ "engine": "vllm",
+ "device": "cuda (vllm)",
+ "python": "3.12.3",
+ "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition"
+}

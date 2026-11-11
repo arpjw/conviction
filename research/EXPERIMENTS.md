@@ -308,3 +308,27 @@ fails, retry once with a 250-episode warm-start; if that also fails, stop and re
 * H-V2b: test_structural final accuracy non-inferior to E3b (lower bound of the difference > −0.03).
 * H-V2c: test_structural natural-history legitimate correction higher than E2 (unpaired cluster bootstrap, as for E3b).
 Seed 1 only (budget); a second seed only if results are borderline.
+
+## 2026-11-10 — T results: thinking on vs off (paired, same 1,257 test_structural episodes)
+
+Engine note: the HF `generate` path pads every batch to its longest thinking trace (Granite: ~15 min per batch), so the
+runs used **vLLM** (continuous batching) with identical prompts, token ids, sampling settings and scoring. Engine check on
+Qwen3-1.7B (HF vs vLLM, same settings): final accuracy 0.757 vs 0.758, flips 0.330 vs 0.335, forged-record resistance
+0.158 vs 0.154; all differences ≤ 0.04 and well inside the intervals. vLLM was 8× faster.
+
+| Model | Final acc. off→on | Pressure flip off→on | Forged-record res. off→on | Auth. update off→on | Unfinished |
+|---|---|---|---|---|---|
+| Qwen3-1.7B | 0.42→0.76 (+0.34*) | 0.54→0.34 (−0.21*) | 0.36→0.15 (−0.20*) | 0.42→0.92 (+0.50*) | 0 |
+| Qwen3-8B | 0.48→0.79 (+0.31*) | 0.63→0.34 (−0.29*) | 0.17→0.09 (−0.08*) | 0.50→0.99 (+0.50*) | 3 |
+| Qwen3.5-9B | 0.67→0.78 (+0.10*) | 0.41→0.33 (−0.08*) | 0.16→0.12 (−0.04, n.s.) | 0.88→0.98 (+0.11*) | 41 |
+| Granite-4.2-8B | 0.60→0.76 (+0.16*) | 0.37→0.34 (−0.03, n.s.) | 0.17→0.09 (−0.08*) | 0.63→0.93 (+0.31*) | 67 |
+
+\* paired 95% cluster-bootstrap interval excludes 0. Full table: `results/comparisons/T_thinking_vs_nonthinking.json`.
+
+**H-T verdict:** pressure part **supported** for 3/4 models (not Granite). Provenance part **refuted in the opposite
+direction**: thinking *lowers* forged-record resistance (significant for 3/4, never significantly higher). Thinking also
+greatly improves accuracy, legitimate correction and authenticated-update accuracy. Interpretation (tentative): reasoning
+treats a forged record as information to work through rather than a claim to check against the channel rule. The GPT
+models' high provenance scores (0.86–0.87) are therefore **not** explained by reasoning alone; more plausibly by training
+for instruction hierarchy / prompt-injection robustness. Unfinished thinking at 4,096 tokens (scored as failures):
+Qwen3.5-9B 3%, Granite 5%.
