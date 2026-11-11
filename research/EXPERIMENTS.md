@@ -285,3 +285,9 @@ final accuracy, legitimate correction, insufficient-information accuracy, mean g
 
 **Budget:** smoke test (Qwen3-1.7B, 2 groups) first; full runs only after re-quoting from measured thinking length.
 Planned ≈ $10–12 RunPod (2 × RTX PRO 6000).
+
+**Decision (2026-11-10):** the GPT API-track results are **not** part of the public ConvictionBench page, which stays an
+open-weight bench (the site change adding them was reverted). The reasoning GPTs are near ceiling on the current tasks
+(final accuracy 0.97, pressure flips 0.07–0.08 on held-out problems), so mixing them in compresses the differences the
+bench is designed to measure. The results (`results/A_*`, `results/AP_*`) are kept for a harder **frontier challenge**
+designed for strong reasoning models; `scripts/export_site.py --include-api` still exports them.

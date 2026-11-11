@@ -1,6 +1,7 @@
 """Export ConvictionBench results for the project web page (aryasomu.com/conviction).
 
     python scripts/export_site.py ~/dev/arpjw.github.io/conviction/data.json
+    python scripts/export_site.py out.json --include-api   # also proprietary API-track rows (not on the public bench)
 
 Every number on the page comes from results/*/metrics.json and breakdown_*.json; nothing is typed by hand.
 """
@@ -29,7 +30,9 @@ MODELS = [
     ("B_Llama-3_2-3B-Instruct", "Llama-3.2-3B", "Meta", "3B", "other"),
     ("B_MobileLLM-Pro", "MobileLLM-Pro", "Meta", "1B", "other"),
 ]
-# Proprietary models evaluated through provider APIs (API track: default reasoning, 90-group sample of test_structural)
+# Proprietary models evaluated through provider APIs (API track: default reasoning, 90-group sample of test_structural).
+# Not shown on the public ConvictionBench page (decision 2026-11-10): the open-model bench stays open-weight only, and
+# these results are reserved for a harder frontier challenge. Export them only with --include-api.
 API_MODELS = [
     ("A_gpt-6-astra", "GPT-6 Astra", "OpenAI", "—", "other"),
     ("A_gpt-6.1-sol", "GPT-6.1 Sol", "OpenAI", "—", "other"),
@@ -53,9 +56,10 @@ def r3(x):
     return None if x is None else round(x, 4)
 
 
-def main(out: str) -> None:
+def main(out: str, include_api: bool = False) -> None:
     rows = []
-    for track, models in (("open", MODELS), ("proprietary", API_MODELS)):
+    tracks = (("open", MODELS), ("proprietary", API_MODELS)) if include_api else (("open", MODELS),)
+    for track, models in tracks:
         for key, label, lab, params, group in models:
             if not (R / key / "metrics.json").exists():
                 continue
@@ -107,4 +111,4 @@ def main(out: str) -> None:
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(sys.argv[1], include_api="--include-api" in sys.argv[2:])
