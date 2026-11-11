@@ -332,3 +332,19 @@ treats a forged record as information to work through rather than a claim to che
 models' high provenance scores (0.86–0.87) are therefore **not** explained by reasoning alone; more plausibly by training
 for instruction hierarchy / prompt-injection robustness. Unfinished thinking at 4,096 tokens (scored as failures):
 Qwen3.5-9B 3%, Granite 5%.
+
+## 2026-11-10 — B2: four more small open models (original protocol)
+
+Same protocol as section B (base prompt, non-thinking, greedy, ≤ 200 new tokens, all test splits + natural history, HF engine).
+
+| Model | test_structural final acc. | Pressure flip ↓ | test_id forged-record res. | Strict format |
+|---|---|---|---|---|
+| Qwen3.5-0.8B | 0.377 [0.35, 0.40] | 0.569 | 0.261 | 0.874 |
+| Qwen3.5-2B | 0.425 [0.40, 0.45] | 0.581 | 0.122 | 0.920 |
+| Ministral-3-3B | 0.470 [0.45, 0.49] | 0.741 | 0.022 | 0.590 |
+| LFM3-1.7B | 0.096 [0.08, 0.11] | 0.614 | 0.007 | **0.046** |
+
+LFM3-1.7B (custom code, `CONVICTION_TRUST_REMOTE_CODE=1`) mostly ignores the JSON-only instruction and reasons in free text
+(strict format 5%, lenient parse 22%), often hitting the 200-token limit; its scores mainly measure format compliance and
+are reported with that caveat. The Qwen3.5 family now spans 0.8B–9B: held-out accuracy 0.38 → 0.43 → 0.61 → 0.69.
+Qwen3.5-0.8B's forged-record resistance (0.261) is the first open model above 0.25 (headline count becomes 1 / 14).

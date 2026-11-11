@@ -1,0 +1,99 @@
+{
+ "model": "mistralai/Ministral-3-3B-Instruct-2512-BF16",
+ "revision": null,
+ "adapter": null,
+ "condition": "base",
+ "decoding": {
+  "do_sample": false,
+  "temperature": null,
+  "top_p": null,
+  "top_k": null,
+  "seed": 0,
+  "max_new_tokens": 200,
+  "enable_thinking": false
+ },
+ "groups_per_split": 0,
+ "sample_seed": 20261110,
+ "generation_stats": {
+  "test_id": {
+   "episodes": 2393,
+   "mean_gen_tokens": 65.58587547012118,
+   "max_gen_tokens": 200,
+   "hit_max_new_tokens": 5,
+   "thinking_unfinished": 0
+  },
+  "test_id_natural": {
+   "episodes": 1027,
+   "mean_gen_tokens": 79.62804284323272,
+   "max_gen_tokens": 200,
+   "hit_max_new_tokens": 11,
+   "thinking_unfinished": 0
+  },
+  "test_template": {
+   "episodes": 2674,
+   "mean_gen_tokens": 64.42744951383695,
+   "max_gen_tokens": 200,
+   "hit_max_new_tokens": 2,
+   "thinking_unfinished": 0
+  },
+  "test_template_natural": {
+   "episodes": 1145,
+   "mean_gen_tokens": 78.28296943231442,
+   "max_gen_tokens": 200,
+   "hit_max_new_tokens": 4,
+   "thinking_unfinished": 0
+  },
+  "test_structural": {
+   "episodes": 2788,
+   "mean_gen_tokens": 79.97453371592539,
+   "max_gen_tokens": 200,
+   "hit_max_new_tokens": 23,
+   "thinking_unfinished": 0
+  },
+  "test_structural_natural": {
+   "episodes": 1132,
+   "mean_gen_tokens": 94.35424028268551,
+   "max_gen_tokens": 200,
+   "hit_max_new_tokens": 35,
+   "thinking_unfinished": 0
+  },
+  "test_adversarial": {
+   "episodes": 22,
+   "mean_gen_tokens": 58.90909090909091,
+   "max_gen_tokens": 96,
+   "hit_max_new_tokens": 0,
+   "thinking_unfinished": 0
+  }
+ },
+ "batch_size": 64,
+ "dtype": "bfloat16",
+ "splits": "test_id,test_template,test_structural,test_adversarial",
+ "limit_groups": null,
+ "timing": {
+  "test_id": {
+   "episodes": 2393,
+   "seconds": 217.68684649467468
+  },
+  "test_template": {
+   "episodes": 2674,
+   "seconds": 228.67458820343018
+  },
+  "test_structural": {
+   "episodes": 2788,
+   "seconds": 293.0742003917694
+  },
+  "test_adversarial": {
+   "episodes": 22,
+   "seconds": 1.878000020980835
+  }
+ },
+ "oom_splits": [],
+ "load_seconds": 7.112429618835449,
+ "total_seconds": 1173.7678656578064,
+ "torch": "2.9.1+cu128",
+ "transformers": "5.22.2",
+ "engine": "hf",
+ "device": "cuda:0",
+ "python": "3.12.3",
+ "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition"
+}

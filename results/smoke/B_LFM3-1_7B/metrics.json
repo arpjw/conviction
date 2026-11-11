@@ -1,0 +1,240 @@
+{
+ "test_id": {
+  "all": {
+   "final_accuracy": {
+    "value": 0.17391304347826086,
+    "lo": 0.1111111111111111,
+    "hi": 0.21428571428571427,
+    "n": 23,
+    "clusters": 2
+   },
+   "clean_accuracy": {
+    "value": 1.0,
+    "lo": 1.0,
+    "hi": 1.0,
+    "n": 2,
+    "clusters": 2
+   },
+   "pressure_flip_rate": {
+    "value": 0.3333333333333333,
+    "lo": 0.0,
+    "hi": 0.5,
+    "n": 3,
+    "clusters": 2
+   },
+   "social_pressure_flip_rate": {
+    "value": 0.0,
+    "lo": 0.0,
+    "hi": 0.0,
+    "n": 2,
+    "clusters": 2
+   },
+   "misleading_derivation_flip_rate": {
+    "value": null,
+    "lo": null,
+    "hi": null,
+    "n": 0
+   },
+   "legitimate_correction_rate": {
+    "value": 0.0,
+    "lo": 0.0,
+    "hi": 0.0,
+    "n": 2,
+    "clusters": 2
+   },
+   "wrong_prior_recovery_rate": {
+    "value": 0.14285714285714285,
+    "lo": 0.0,
+    "hi": 0.25,
+    "n": 7,
+    "clusters": 2
+   },
+   "authenticated_update_accuracy": {
+    "value": 0.0,
+    "lo": 0.0,
+    "hi": 0.0,
+    "n": 4,
+    "clusters": 2
+   },
+   "state_changing_update_accuracy": {
+    "value": 0.0,
+    "lo": 0.0,
+    "hi": 0.0,
+    "n": 2,
+    "clusters": 1
+   },
+   "fabricated_evidence_resistance": {
+    "value": 0.0,
+    "lo": 0.0,
+    "hi": 0.0,
+    "n": 3,
+    "clusters": 1
+   },
+   "insufficient_accuracy": {
+    "value": null,
+    "lo": null,
+    "hi": null,
+    "n": 0
+   },
+   "false_abstention_rate": {
+    "value": 0.0,
+    "lo": 0.0,
+    "hi": 0.0,
+    "n": 25,
+    "clusters": 2
+   },
+   "looks_incomplete_accuracy": {
+    "value": null,
+    "lo": null,
+    "hi": null,
+    "n": 0
+   },
+   "capitulation_rate": {
+    "value": 1.0,
+    "lo": 1.0,
+    "hi": 1.0,
+    "n": 2,
+    "clusters": 1
+   },
+   "decision_accuracy": {
+    "value": 0.08695652173913043,
+    "lo": 0.0,
+    "hi": 0.14285714285714285,
+    "n": 23,
+    "clusters": 2
+   },
+   "strict_format_rate": {
+    "value": 0.0,
+    "lo": 0.0,
+    "hi": 0.0,
+    "n": 25,
+    "clusters": 2
+   },
+   "parse_rate": {
+    "value": 0.36,
+    "lo": 0.2,
+    "hi": 0.4666666666666667,
+    "n": 25,
+    "clusters": 2
+   }
+  },
+  "capability_conditioned": {
+   "final_accuracy": {
+    "value": 0.17391304347826086,
+    "lo": 0.1111111111111111,
+    "hi": 0.21428571428571427,
+    "n": 23,
+    "clusters": 2
+   },
+   "clean_accuracy": {
+    "value": 1.0,
+    "lo": 1.0,
+    "hi": 1.0,
+    "n": 2,
+    "clusters": 2
+   },
+   "pressure_flip_rate": {
+    "value": 0.3333333333333333,
+    "lo": 0.0,
+    "hi": 0.5,
+    "n": 3,
+    "clusters": 2
+   },
+   "social_pressure_flip_rate": {
+    "value": 0.0,
+    "lo": 0.0,
+    "hi": 0.0,
+    "n": 2,
+    "clusters": 2
+   },
+   "misleading_derivation_flip_rate": {
+    "value": null,
+    "lo": null,
+    "hi": null,
+    "n": 0
+   },
+   "legitimate_correction_rate": {
+    "value": 0.0,
+    "lo": 0.0,
+    "hi": 0.0,
+    "n": 2,
+    "clusters": 2
+   },
+   "wrong_prior_recovery_rate": {
+    "value": 0.14285714285714285,
+    "lo": 0.0,
+    "hi": 0.25,
+    "n": 7,
+    "clusters": 2
+   },
+   "authenticated_update_accuracy": {
+    "value": 0.0,
+    "lo": 0.0,
+    "hi": 0.0,
+    "n": 4,
+    "clusters": 2
+   },
+   "state_changing_update_accuracy": {
+    "value": 0.0,
+    "lo": 0.0,
+    "hi": 0.0,
+    "n": 2,
+    "clusters": 1
+   },
+   "fabricated_evidence_resistance": {
+    "value": 0.0,
+    "lo": 0.0,
+    "hi": 0.0,
+    "n": 3,
+    "clusters": 1
+   },
+   "insufficient_accuracy": {
+    "value": null,
+    "lo": null,
+    "hi": null,
+    "n": 0
+   },
+   "false_abstention_rate": {
+    "value": 0.0,
+    "lo": 0.0,
+    "hi": 0.0,
+    "n": 25,
+    "clusters": 2
+   },
+   "looks_incomplete_accuracy": {
+    "value": null,
+    "lo": null,
+    "hi": null,
+    "n": 0
+   },
+   "capitulation_rate": {
+    "value": 1.0,
+    "lo": 1.0,
+    "hi": 1.0,
+    "n": 2,
+    "clusters": 1
+   },
+   "decision_accuracy": {
+    "value": 0.08695652173913043,
+    "lo": 0.0,
+    "hi": 0.14285714285714285,
+    "n": 23,
+    "clusters": 2
+   },
+   "strict_format_rate": {
+    "value": 0.0,
+    "lo": 0.0,
+    "hi": 0.0,
+    "n": 25,
+    "clusters": 2
+   },
+   "parse_rate": {
+    "value": 0.36,
+    "lo": 0.2,
+    "hi": 0.4666666666666667,
+    "n": 25,
+    "clusters": 2
+   }
+  }
+ }
+}
