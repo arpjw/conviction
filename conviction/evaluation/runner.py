@@ -148,6 +148,23 @@ def generate(model, tok, prompts: list[str], batch_size: int = 32, max_new_token
     return outs  # type: ignore[return-value]
 
 
+def generate_vllm(llm, tok, prompts: list[str], max_new_tokens: int, gen_kwargs: dict | None, seed: int,
+                  lengths_out: list | None = None) -> list[str]:
+    """Generate with vLLM (continuous batching). Prompts are tokenized exactly as in the HF path
+    (chat-template text, no extra special tokens) and passed as token ids."""
+    from vllm import SamplingParams
+    kw = gen_kwargs or {}
+    sp = SamplingParams(max_tokens=max_new_tokens, seed=seed,
+                        temperature=kw.get("temperature") if kw.get("do_sample") else 0.0,
+                        top_p=kw.get("top_p") or 1.0, top_k=kw.get("top_k") or 0)
+    ids = [tok(p, add_special_tokens=False)["input_ids"] for p in prompts]
+    outs = llm.generate([{"prompt_token_ids": x} for x in ids], sp)
+    texts = [o.outputs[0].text for o in outs]
+    if lengths_out is not None:
+        lengths_out.extend(len(o.outputs[0].token_ids) for o in outs)
+    return texts
+
+
 def _write_jsonl(path: Path, rows: list[dict]) -> None:
     with open(path, "w") as f:
         for r in rows:
@@ -182,6 +199,9 @@ def main(argv=None) -> int:
     ap.add_argument("--top-p", type=float, default=None)
     ap.add_argument("--top-k", type=int, default=None)
     ap.add_argument("--seed", type=int, default=0, help="torch seed (only matters with --do-sample)")
+    ap.add_argument("--engine", default="hf", choices=["hf", "vllm"],
+                    help="generation engine; vllm uses continuous batching (much faster for long thinking outputs)")
+    ap.add_argument("--max-model-len", type=int, default=8192, help="vllm context length (prompt + output)")
     ap.add_argument("--out", required=True)
     args = ap.parse_args(argv)
 
@@ -192,7 +212,17 @@ def main(argv=None) -> int:
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     t_start = time.time()
-    model, tok = load_model(args.model, args.adapter, args.revision, args.dtype)
+    llm = model = None
+    if args.engine == "vllm":
+        if args.adapter:
+            raise SystemExit("--engine vllm does not support --adapter here; use the hf engine")
+        from transformers import AutoTokenizer
+        from vllm import LLM
+        tok = AutoTokenizer.from_pretrained(args.model, revision=args.revision)
+        llm = LLM(model=args.model, revision=args.revision, dtype=args.dtype, max_model_len=args.max_model_len,
+                  seed=args.seed, trust_remote_code=False)
+    else:
+        model, tok = load_model(args.model, args.adapter, args.revision, args.dtype)
     t_loaded = time.time()
     import torch
     torch.manual_seed(args.seed)
@@ -203,8 +233,11 @@ def main(argv=None) -> int:
     def run_episodes(eps_, label):
         prompts_ = [render_prompt(tok, e["messages"], args.condition, args.enable_thinking) for e in eps_]
         lens: list[int] = []
-        raws_ = generate(model, tok, prompts_, args.batch_size, args.max_new_tokens, gen_kwargs=gen_kwargs,
-                         lengths_out=lens)
+        if llm is not None:
+            raws_ = generate_vllm(llm, tok, prompts_, args.max_new_tokens, gen_kwargs, args.seed, lengths_out=lens)
+        else:
+            raws_ = generate(model, tok, prompts_, args.batch_size, args.max_new_tokens, gen_kwargs=gen_kwargs,
+                             lengths_out=lens)
         recs_ = []
         unfinished = 0
         for e, p, r, n in zip(eps_, prompts_, raws_, lens):
@@ -267,7 +300,8 @@ def main(argv=None) -> int:
             "batch_size": args.batch_size, "dtype": args.dtype, "splits": args.splits,
             "limit_groups": args.limit_groups, "timing": timing, "oom_splits": OOM_SPLITS, "load_seconds": t_loaded - t_start,
             "total_seconds": time.time() - t_start, "torch": torch.__version__,
-            "transformers": transformers.__version__, "device": str(model.device), "python": platform.python_version(),
+            "transformers": transformers.__version__, "engine": args.engine,
+            "device": str(model.device) if model is not None else "cuda (vllm)", "python": platform.python_version(),
             "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None}
     json.dump(info, open(out / "run_info.json", "w"), indent=1)
     for split, d in all_metrics.items():
