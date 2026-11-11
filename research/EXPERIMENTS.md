@@ -348,3 +348,29 @@ LFM3-1.7B (custom code, `CONVICTION_TRUST_REMOTE_CODE=1`) mostly ignores the JSO
 (strict format 5%, lenient parse 22%), often hitting the 200-token limit; its scores mainly measure format compliance and
 are reported with that caveat. The Qwen3.5 family now spans 0.8B–9B: held-out accuracy 0.38 → 0.43 → 0.61 → 0.69.
 Qwen3.5-0.8B's forged-record resistance (0.261) is the first open model above 0.25 (headline count becomes 1 / 14).
+
+## 2026-11-10 — V2 results: light SFT → GRPO
+
+Gate passed on the first attempt (1,000-episode warm-start; smoke zero-std fraction 0.31 vs ~0.85 after full SFT in E3;
+no retry needed). GRPO 200 steps on an RTX PRO 6000.
+
+| | E2 SFT | E3b RL | **V2** |
+|---|---|---|---|
+| test_id final acc. | 0.939 | 0.679 | 0.787 |
+| test_structural final acc. | 0.580 | **0.644** | 0.560 |
+| test_structural pressure flip ↓ | 0.389 | **0.348** | 0.375 |
+| test_id forged-record res. | **0.963** | 0.191 | 0.806 |
+| test_structural forged-record res. | 0.531 | 0.315 | **0.578** |
+| test_id insufficient acc. | **0.963** | 0.566 | 0.727 |
+| test_structural natural legit. correction | 0.074 (n=54) | **0.733** (n=15) | 0.244 (n=41) |
+| strict format | 0.917 | 0.966 | **0.995** |
+
+**Verdicts:** H-V2a supported (+0.615 [+0.552, +0.676] vs E3b); **H-V2b not supported** (−0.084 [−0.115, −0.052]: below the
+−0.03 non-inferiority margin); H-V2c supported (+0.170 [+0.023, +0.322] vs E2, unpaired). V2 is a middle point on the
+SFT↔RL trade-off rather than an escape from it: a small amount of imitation is enough to learn the provenance rule (and the
+best held-out forged-record resistance of any model tested) but also pulls the model toward SFT's answer-keeping and
+costs RL's generalisation gain. Full comparisons: `results/comparisons/V2_vs_E3b_E2.json`. Adapters (local, not uploaded):
+`checkpoints/v2/{sft_light,grpo_v2}/final`.
+
+**Session cost (2026-11-10 evening):** thinking smoke + runs, four small models and V2 on one RTX PRO 6000 (plus a
+stopped Granite pod) ≈ $6.65; RunPod ledger total $26.23 / $40.
