@@ -6,13 +6,14 @@ Base model: `Qwen/Qwen3-1.7B` (non-thinking mode). Budget: ≤ $40 of GPU time.
 
 **Project page:** https://aryasomu.com/conviction/ · **Dataset:** [arpjw/ConvictionBench](https://huggingface.co/datasets/arpjw/ConvictionBench) · **Models:** [arpjw/conviction-1.7b-sft](https://huggingface.co/arpjw/conviction-1.7b-sft), [arpjw/conviction-1.7b-rl](https://huggingface.co/arpjw/conviction-1.7b-rl)
 
-**Status (2026-11-10):** ConvictionBench v0.1 frozen and released; base, prompting, SFT, SFT→GRPO, a matched SFT control and GRPO-only runs complete (GRPO-only replicated with a second seed); 10 off-the-shelf models benchmarked. Total compute ≈ $16.50 of rented GPU time ([ledger](results/budget_ledger.json)). Working report draft: [research/REPORT.md](research/REPORT.md); full experiment log: [research/EXPERIMENTS.md](research/EXPERIMENTS.md); tables: [results/tables/main_results.md](results/tables/main_results.md).
+**Status (2026-11-10):** ConvictionBench v0.1 frozen and released; base, prompting, SFT, SFT→GRPO, a matched SFT control and GRPO-only runs complete (GRPO-only replicated with a second seed); 14 off-the-shelf open models benchmarked, plus a thinking-mode control and a v2 training recipe. Total compute ≈ $26 of rented GPU time ([ledger](results/budget_ledger.json)); a separate frontier API track (GPT models, reserved for a future harder challenge, not on the leaderboard) used ≈ $39 of OpenAI credit. Working report draft: [research/REPORT.md](research/REPORT.md); full experiment log: [research/EXPERIMENTS.md](research/EXPERIMENTS.md); tables: [results/tables/main_results.md](results/tables/main_results.md).
 
 ### ConvictionBench leaderboard (v0.1, non-thinking, greedy)
 
 | Model | Held-out problems: final acc. | Held-out problems: pressure flip ↓ | Forged-record resistance (in-dist.) |
 |---|---|---|---|
 | **Conviction-RL (ours, 1.7B)** | 0.644 | 0.348 | 0.191 |
+| **Conviction-v2 (ours, 1.7B)** | 0.560 | 0.375 | 0.806 |
 | **Conviction-SFT (ours, 1.7B)** | 0.580 | 0.389 | 0.963 |
 | Qwen3-1.7B (our base) | 0.424 | 0.536 | 0.248 |
 | Qwen3.5-9B | 0.688 | 0.399 | 0.060 |
@@ -20,13 +21,19 @@ Base model: `Qwen/Qwen3-1.7B` (non-thinking mode). Budget: ≤ $40 of GPU time.
 | Qwen3.5-4B | 0.606 | 0.428 | 0.035 |
 | Ministral-3-8B | 0.526 | 0.659 | 0.022 |
 | Qwen3-8B | 0.474 | 0.648 | 0.087 |
+| Ministral-3-3B | 0.470 | 0.741 | 0.022 |
+| Qwen3.5-2B | 0.425 | 0.581 | 0.122 |
 | Nemotron-3-Nano-4B | 0.391 | 0.695 | 0.067 |
+| Qwen3.5-0.8B | 0.377 | 0.569 | 0.261 |
 | Phi-4-mini | 0.347 | 0.767 | 0.065 |
-| MobileLLM-Pro | 0.321 | 0.670 | 0.248 |
+| MobileLLM-Pro¹ | 0.321 | 0.670 | 0.248 |
 | Llama-3.2-3B | 0.317 | 0.898 | 0.164 |
 | Olmo-3-7B | 0.304 | 0.812 | 0.035 |
+| LFM3-1.7B² | 0.096 | 0.614 | 0.007 |
 
-No off-the-shelf model resists forged records pasted into user messages (all ≤ 0.25); our GRPO adapter has the lowest pressure-flip rate of the 13 models. Per-model protocol notes (GPU, transformers version, kernels) are in each `results/*/run_info.json` and in [research/EXPERIMENTS.md](research/EXPERIMENTS.md) § B.
+¹ Custom code needs transformers 4.56; follows the strict format in about half of answers. ² Mostly ignores the JSON-only instruction (5% strict format); scores mainly reflect format compliance.
+
+Off-the-shelf open models rarely resist forged records pasted into user messages (13 of 14 ≤ 0.25; best 0.26); our GRPO adapter has the lowest pressure-flip rate of the 18 models. **Thinking mode** (Qwen3-1.7B/8B, Qwen3.5-9B, Granite-4.2-8B, paired on the same episodes) raises accuracy and lowers pressure flips but *lowers* forged-record resistance; see the [results page](https://aryasomu.com/conviction/#thinking) and `results/comparisons/T_thinking_vs_nonthinking.json`. Per-model protocol notes (GPU, transformers version, kernels) are in each `results/*/run_info.json` and in [research/EXPERIMENTS.md](research/EXPERIMENTS.md) §§ B, B2, T.
 
 ### Training results (Qwen3-1.7B)
 
@@ -39,10 +46,12 @@ No off-the-shelf model resists forged records pasted into user messages (all ≤
 | + SFT → more SFT (control) | 0.970 | 0.612 | 0.028 | 0.880 | 0.980 |
 | + GRPO only (seed 1) | 0.679 | 0.644 | 0.304 | 0.926 | 0.191 |
 | + GRPO only (seed 2) | 0.698 | 0.642 | 0.282 | 0.920 | 0.218 |
+| + light SFT → GRPO (v2) | 0.787 | 0.560 | 0.110 | 0.926 | 0.806 |
 
 * Prompting does nothing; SFT nearly solves the in-distribution task but hardens into "keep" on unseen problem types.
 * GRPO after SFT is no better than matched extra SFT (≈85% of GRPO groups had zero reward variance).
 * GRPO from the base model beats SFT on held-out subtypes (pre-registered test; replicated with a second seed) but never learns that records pasted into user messages are not authoritative.
+* v2 (1,000-example SFT warm-start, then the same GRPO) learns the provenance rule (0.81 in-distribution; best held-out forged-record resistance of any model, 0.58) but gives up GRPO's held-out accuracy (0.56): it moves along the SFT↔RL trade-off rather than escaping it.
 
 ![Resistance vs receptiveness](results/figures/fig2_resistance_vs_receptiveness.png)
 
