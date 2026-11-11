@@ -17,6 +17,7 @@ R = Path("results")
 # key -> (results dir, label, lab, params, group)
 MODELS = [
     ("E3b_grpo_base", "Conviction-RL (ours)", "GRPO on Qwen3-1.7B", "1.7B", "ours_rl"),
+    ("V2", "Conviction-v2 (ours)", "light SFT then GRPO on Qwen3-1.7B", "1.7B", "ours_v2"),
     ("E2_sft", "Conviction-SFT (ours)", "SFT on Qwen3-1.7B", "1.7B", "ours_sft"),
     ("E0_base", "Qwen3-1.7B", "Alibaba · our base model", "1.7B", "base"),
     ("B_Qwen3_5-9B", "Qwen3.5-9B", "Alibaba", "9B", "other"),
@@ -29,6 +30,10 @@ MODELS = [
     ("B_Phi-4-mini-instruct", "Phi-4-mini", "Microsoft", "3.8B", "other"),
     ("B_Llama-3_2-3B-Instruct", "Llama-3.2-3B", "Meta", "3B", "other"),
     ("B_MobileLLM-Pro", "MobileLLM-Pro", "Meta", "1B", "other"),
+    ("B_Qwen3_5-2B", "Qwen3.5-2B", "Alibaba", "2B", "other"),
+    ("B_Qwen3_5-0_8B", "Qwen3.5-0.8B", "Alibaba", "0.8B", "other"),
+    ("B_Ministral-3-3B-Instruct-2512-BF16", "Ministral-3-3B", "Mistral", "3B", "other"),
+    ("B_LFM3-1_7B", "LFM3-1.7B", "Liquid AI", "1.7B", "other"),
 ]
 # Proprietary models evaluated through provider APIs (API track: default reasoning, 90-group sample of test_structural).
 # Not shown on the public ConvictionBench page (decision 2026-11-10): the open-model bench stays open-weight only, and
@@ -49,6 +54,9 @@ NOTES = {
     "B_MobileLLM-Pro": "Ships custom code for transformers 4.53; evaluated with transformers 4.56.2. "
                        "Follows the JSON format strictly in about half of responses, which lowers its scores.",
     "E3b_grpo_base": "Seed 1. A second seed (E6) reaches 0.642 test_structural final accuracy.",
+    "V2": "1,000-example SFT warm-start, then the same 200-step GRPO as Conviction-RL. Not yet released.",
+    "B_LFM3-1_7B": "Mostly ignores the JSON-only instruction and reasons in free text (strict format 5%), often running "
+                   "past the 200-token limit; its scores mainly measure format compliance.",
 }
 
 
@@ -97,6 +105,18 @@ def main(out: str, include_api: bool = False) -> None:
                                               "n": (bs.get(p, {}).get("pressure_flip_rate") or {}).get("n", 0)}
                                           for p in PRESSURES}
             rows.append(row)
+    thinking = None
+    tp = R / "comparisons" / "T_thinking_vs_nonthinking.json"
+    if tp.exists():
+        t = json.loads(tp.read_text())["models"]
+        keep = ["final_accuracy", "pressure_flip_rate", "fabricated_evidence_resistance", "authenticated_update_accuracy"]
+        thinking = {"note": "Thinking on (sampled, T=0.6, up to 4,096 tokens) minus thinking off (greedy), same 1,257 "
+                            "held-out episodes (90 problem groups), paired cluster bootstrap.",
+                    "models": [{"label": name, "off": {k: r3(v["off"][k]) for k in keep}, "on": {k: r3(v["on"][k]) for k in keep},
+                                "diff": {k: {kk: r3(v["thinking_minus_nonthinking"][k][kk]) for kk in ("diff", "lo", "hi")}
+                                         for k in keep},
+                                "mean_think_tokens": round(v["mean_gen_tokens"]), "unfinished": v["unfinished"],
+                                "n": v["n_episodes"]} for name, v in t.items()]}
     manifest = json.loads(Path("data/conviction_bench/v0.1/manifest.json").read_text())
     data = {"benchmark": "ConvictionBench v0.1",
             "hashes": {k: v["sha256"][:12] for k, v in manifest["splits"].items()},
@@ -105,7 +125,7 @@ def main(out: str, include_api: bool = False) -> None:
             "api_protocol": "Proprietary models: same system prompt and response format through provider APIs, tool "
                             "records sent as native tool calls, default reasoning, 90 sampled problem groups of the "
                             "held-out split plus natural history. Not a like-for-like comparison with the open track.",
-            "models": rows}
+            "models": rows, "thinking": thinking}
     Path(out).write_text(json.dumps(data, indent=1))
     print(f"wrote {out}: {len(rows)} models")
 
