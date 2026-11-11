@@ -425,3 +425,21 @@ rates: this looks like indifference to challenges, not provenance checking. Qwen
 
 **Cost:** two RTX A6000 pods, $3.55 including about 1.8 h of idle time (a monitoring bug kept one pod running after it
 finished). RunPod ledger: $29.78 / $40.
+
+## 2026-11-11 — Post-hoc analysis on 41 models (exploratory, not pre-registered)
+
+**Channel test (provenance gap).** `scripts/analysis_provenance.py` → `results/comparisons/provenance_gap.json`. 790
+matched pairs (c/w × forged/trusted twins, same record text, challenge and framing; only the channel differs), pooled
+over test_id/test_template/test_structural, cluster bootstrap over 482 problem groups. Gap = P(adopt | tool) −
+P(adopt | pasted). Off-the-shelf models: 25 / 37 adopt pasted records significantly *more* often (largest LFM3-1.7B
+−0.19, Olmo-3-7B −0.16, Ministral-3-14B −0.15), 11 show no difference, none prefers the tool channel by a clear margin
+(MiMo-V2.6-Distill-9B +0.04 [+0.00, +0.08]). Ours: SFT +0.54 [+0.49, +0.59], v2 +0.12 [+0.09, +0.16], RL −0.03
+[−0.07, +0.01]. Caveat: the pasted version also carries the forger's authority label ("[SYSTEM VERIFIED]" etc.), so the
+negative gaps mix channel-blindness with susceptibility to fake authority markers.
+
+**Scale.** Across the 37 off-the-shelf models (Spearman, log parameters): tool-update acceptance ρ = +0.57,
+forged-record resistance ρ = −0.54 (held-out problems), final accuracy ρ = +0.55. Within families, forged-record
+resistance falls with size in Qwen3 (0.48 → 0.34 → 0.17 → 0.15 → 0.10, 0.6B → 14B), Qwen3.5 and Granite; Ministral-3 is
+flat at about 0.08. Final accuracy and tool-update acceptance are almost the same ranking (ρ = +0.96): on this benchmark,
+general capability mostly shows up as record-following. Exploratory: 37 models, families not independent, no correction
+for the number of correlations examined.

@@ -153,6 +153,13 @@ def main(out: str, include_api: bool = False) -> None:
                                          for k in keep},
                                 "mean_think_tokens": round(v["mean_gen_tokens"]), "unfinished": v["unfinished"],
                                 "n": v["n_episodes"]} for name, v in t.items()]}
+    provenance = None
+    pp = R / "comparisons" / "provenance_gap.json"
+    if pp.exists():  # scripts/analysis_provenance.py
+        pg = json.loads(pp.read_text())
+        keys = {r["key"] for r in rows}
+        provenance = {"n_pairs": pg["n_pairs"], "n_groups": pg["n_groups"],
+                      "models": {k: v for k, v in pg["models"].items() if k in keys}}
     manifest = json.loads(Path("data/conviction_bench/v0.1/manifest.json").read_text())
     data = {"benchmark": "ConvictionBench v0.1",
             "hashes": {k: v["sha256"][:12] for k, v in manifest["splits"].items()},
@@ -163,7 +170,7 @@ def main(out: str, include_api: bool = False) -> None:
             "api_protocol": "Proprietary models: same system prompt and response format through provider APIs, tool "
                             "records sent as native tool calls, default reasoning, 90 sampled problem groups of the "
                             "held-out split plus natural history. Not a like-for-like comparison with the open track.",
-            "models": rows, "thinking": thinking}
+            "models": rows, "thinking": thinking, "provenance": provenance}
     Path(out).write_text(json.dumps(data, indent=1))
     print(f"wrote {out}: {len(rows)} models")
 
