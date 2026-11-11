@@ -400,3 +400,8 @@ if the pod is logged in with the user's own token.
 
 **Hardware and budget:** RTX A6000 48 GB pods (Secure, $0.59/h). Estimated $3–3.60 in total; re-estimate after the first
 two models. Ledger before B3: $26.23 / $40.
+
+**B3 parity result (2026-11-11 07:05 UTC): PASS, 24/24.** vLLM vs the published HF runs, max |Δ| = 0.017 (Qwen3-1.7B,
+accepts corrections / forged records, test_structural); Olmo-3-7B max |Δ| = 0.008. B3 proceeds on vLLM as
+pre-registered. Table: `results/comparisons/B3_parity_vllm_vs_hf.json`; runs: `results/P_*`. vLLM was about 3.5× faster
+than HF for non-thinking eval (Qwen3-1.7B: 5 min on an A6000 vs 17 min with HF on a 4090).
